@@ -82,4 +82,32 @@ export const recommendationsApi = {
       throw error
     }
   },
+
+  async markRecommendationDone(id: string): Promise<ApiResponse<Recommendation>> {
+    try {
+      const response = await apiClient.patch<ApiResponse<Recommendation>>(
+        `/api/recommendations/${id}/done`
+      )
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || 'Failed to update recommendation')
+      }
+      throw error
+    }
+  },
+
+  async markRecommendationPlanned(id: string): Promise<ApiResponse<Recommendation>> {
+    try {
+      const response = await apiClient.patch<ApiResponse<Recommendation>>(
+        `/api/recommendations/${id}/planned`
+      )
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || 'Failed to update recommendation')
+      }
+      throw error
+    }
+  },
 }

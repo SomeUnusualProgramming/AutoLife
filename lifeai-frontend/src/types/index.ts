@@ -35,5 +35,8 @@ export interface Recommendation {
   category: string
   suggestion: string
   priority: 'low' | 'medium' | 'high'
+  status: 'PLANNED' | 'DONE'
   actionUrl?: string
+  aiGenerated?: boolean
+  createdAt?: string
 }
