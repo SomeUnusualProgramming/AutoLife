@@ -9,5 +9,6 @@ public enum EventType {
     WEIGHT,
     SLEEP,
     MOOD,
+    MEDICAL,
     OTHER
 }
