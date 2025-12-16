@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Event, Timeline, Recommendation, ApiResponse } from '../types'
 
 const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_URL) {
@@ -27,3 +28,58 @@ apiClient.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+export const eventApi = {
+  async sendEvent(event: Event): Promise<ApiResponse<Event>> {
+    try {
+      const response = await apiClient.post<ApiResponse<Event>>('/api/events', event)
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || 'Failed to send event')
+      }
+      throw error
+    }
+  },
+}
+
+export const timelineApi = {
+  async getTimeline(limit?: number, offset?: number): Promise<ApiResponse<Timeline>> {
+    try {
+      const params = new URLSearchParams()
+      if (limit !== undefined) params.append('limit', String(limit))
+      if (offset !== undefined) params.append('offset', String(offset))
+      
+      const queryString = params.toString()
+      const url = queryString ? `/api/timeline?${queryString}` : '/api/timeline'
+      
+      const response = await apiClient.get<ApiResponse<Timeline>>(url)
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || 'Failed to fetch timeline')
+      }
+      throw error
+    }
+  },
+}
+
+export const recommendationsApi = {
+  async getRecommendations(category?: string): Promise<ApiResponse<Recommendation[]>> {
+    try {
+      const params = new URLSearchParams()
+      if (category) params.append('category', category)
+      
+      const queryString = params.toString()
+      const url = queryString ? `/api/recommendations?${queryString}` : '/api/recommendations'
+      
+      const response = await apiClient.get<ApiResponse<Recommendation[]>>(url)
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || 'Failed to fetch recommendations')
+      }
+      throw error
+    }
+  },
+}
