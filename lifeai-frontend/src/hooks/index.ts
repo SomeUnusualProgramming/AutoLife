@@ -116,7 +116,37 @@ export const useRecommendations = (category?: string) => {
     }
   }, [category])
 
+  const markDone = useCallback(async (id: string) => {
+    try {
+      const response = await recommendationsApi.markRecommendationDone(id)
+      if (response.data && data) {
+        const updated = data.map(rec => rec.id === id ? response.data : rec).filter((rec): rec is Recommendation => !!rec)
+        setData(updated)
+      }
+      return response.data
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to mark recommendation as done'
+      setError(new Error(message))
+      throw err
+    }
+  }, [data])
+
+  const markPlanned = useCallback(async (id: string) => {
+    try {
+      const response = await recommendationsApi.markRecommendationPlanned(id)
+      if (response.data && data) {
+        const updated = data.map(rec => rec.id === id ? response.data : rec).filter((rec): rec is Recommendation => !!rec)
+        setData(updated)
+      }
+      return response.data
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to mark recommendation as planned'
+      setError(new Error(message))
+      throw err
+    }
+  }, [data])
+
   fetch()
 
-  return { fetch, status, data, error }
+  return { fetch, status, data, error, markDone, markPlanned }
 }
