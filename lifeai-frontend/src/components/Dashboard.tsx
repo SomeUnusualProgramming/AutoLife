@@ -1,20 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSendEvent, useTimeline, useRecommendations } from '../hooks'
-import { Event, TimelineEntry } from '../types'
+import { Event } from '../types'
+import { Timeline } from './Timeline'
 
 export const Dashboard = () => {
   const [inputValue, setInputValue] = useState('')
-  const [displayEvents, setDisplayEvents] = useState<TimelineEntry[]>([])
   
   const { send: sendEvent, status: sendStatus, error: sendError } = useSendEvent()
-  const { fetch: fetchTimeline, status: timelineStatus, data: timelineData, error: timelineError } = useTimeline(50)
+  const { fetch: fetchTimeline } = useTimeline(50)
   const { fetch: fetchRecommendations, status: recStatus, data: recData, error: recError } = useRecommendations()
-
-  useEffect(() => {
-    if (timelineData?.entries) {
-      setDisplayEvents(timelineData.entries)
-    }
-  }, [timelineData])
 
   const handleAddEvent = async () => {
     if (inputValue.trim()) {
@@ -37,21 +31,6 @@ export const Dashboard = () => {
     if (e.key === 'Enter' && e.ctrlKey) {
       handleAddEvent()
     }
-  }
-
-  const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString('pl-PL', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    })
-  }
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('pl-PL', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric'
-    })
   }
 
   return (
@@ -98,70 +77,7 @@ export const Dashboard = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-900">Timeline</h2>
-                <button
-                  onClick={() => fetchTimeline()}
-                  disabled={timelineStatus === 'pending'}
-                  className="text-sm px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded disabled:opacity-50"
-                >
-                  {timelineStatus === 'pending' ? 'Ładowanie...' : 'Odśwież'}
-                </button>
-              </div>
-              
-              {timelineStatus === 'pending' && (
-                <div className="text-center py-8">
-                  <div className="inline-block">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                  </div>
-                  <p className="text-gray-500 mt-2">Ładowanie timeline...</p>
-                </div>
-              )}
-              
-              {timelineError && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-4">
-                  <p className="text-sm text-red-700">Błąd: {timelineError.message}</p>
-                </div>
-              )}
-              
-              {timelineStatus === 'success' && displayEvents.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">Brak zdarzeń. Dodaj swoje pierwsze zdarzenie!</p>
-                </div>
-              ) : timelineStatus === 'success' && (
-                <div className="space-y-4">
-                  {displayEvents.map((entry, index) => (
-                    <div key={entry.id} className="relative pb-4">
-                      {index !== displayEvents.length - 1 && (
-                        <div className="absolute left-3 top-8 w-0.5 h-12 bg-indigo-200"></div>
-                      )}
-                      
-                      <div className="flex gap-4">
-                        <div className="flex-shrink-0 relative z-10">
-                          <div className="flex items-center justify-center h-7 w-7 rounded-full bg-indigo-600">
-                            <div className="h-3 w-3 rounded-full bg-white"></div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex-1">
-                          <div className="bg-gray-50 rounded-lg p-4">
-                            <p className="text-gray-900 font-medium">{entry.event.description}</p>
-                            <div className="flex gap-2 text-xs text-gray-500 mt-2">
-                              <span>{formatDate(entry.createdAt)}</span>
-                              <span>•</span>
-                              <span>{formatTime(entry.createdAt)}</span>
-                              <span>•</span>
-                              <span>Ważność: {entry.importance}/10</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <Timeline limit={50} />
           </div>
 
           <div className="lg:col-span-1">
