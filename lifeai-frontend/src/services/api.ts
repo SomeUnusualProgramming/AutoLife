@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Event, Timeline, Recommendation, ApiResponse } from '../types'
+import { Event, Timeline, Recommendation, ApiResponse, TranscriptionResult } from '../types'
 
 const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_URL) {
@@ -106,6 +106,57 @@ export const recommendationsApi = {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw new Error(error.response?.data?.error || 'Failed to update recommendation')
+      }
+      throw error
+    }
+  },
+}
+
+export const speechToTextApi = {
+  async transcribeAudio(audioFile: File, language?: string): Promise<TranscriptionResult> {
+    try {
+      const formData = new FormData()
+      formData.append('file', audioFile)
+      if (language) formData.append('language', language)
+
+      const response = await apiClient.post<TranscriptionResult>(
+        '/speech-to-text/transcribe',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || 'Failed to transcribe audio')
+      }
+      throw error
+    }
+  },
+
+  async transcribeAudioBytes(audioBytes: Blob, mimeType: string, language?: string): Promise<TranscriptionResult> {
+    try {
+      const formData = new FormData()
+      formData.append('audioBytes', audioBytes)
+      formData.append('mimeType', mimeType)
+      if (language) formData.append('language', language)
+
+      const response = await apiClient.post<TranscriptionResult>(
+        '/speech-to-text/transcribe-bytes',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || 'Failed to transcribe audio')
       }
       throw error
     }

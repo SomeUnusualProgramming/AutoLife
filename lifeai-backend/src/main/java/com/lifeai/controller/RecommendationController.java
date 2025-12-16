@@ -12,11 +12,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/recommendations")
+@RequestMapping("/recommendations")
 @RequiredArgsConstructor
 public class RecommendationController {
 
     private final RecommendationService recommendationService;
+
+    @GetMapping
+    public ResponseEntity<List<RecommendationResponse>> getAllRecommendations() {
+        List<RecommendationResponse> recommendations = recommendationService.getAllRecommendations();
+        return ResponseEntity.ok(recommendations);
+    }
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<List<RecommendationResponse>> getRecommendationsByUserId(@PathVariable Long userId) {
@@ -61,6 +67,18 @@ public class RecommendationController {
     @PatchMapping("/{id}/apply")
     public ResponseEntity<RecommendationResponse> applyRecommendation(@PathVariable Long id) {
         RecommendationResponse recommendation = recommendationService.applyRecommendation(id);
+        return ResponseEntity.ok(recommendation);
+    }
+
+    @PatchMapping("/{id}/done")
+    public ResponseEntity<RecommendationResponse> markDone(@PathVariable Long id) {
+        RecommendationResponse recommendation = recommendationService.markRecommendationDone(id);
+        return ResponseEntity.ok(recommendation);
+    }
+
+    @PatchMapping("/{id}/planned")
+    public ResponseEntity<RecommendationResponse> markPlanned(@PathVariable Long id) {
+        RecommendationResponse recommendation = recommendationService.markRecommendationPlanned(id);
         return ResponseEntity.ok(recommendation);
     }
 
