@@ -40,3 +40,11 @@ export interface Recommendation {
   aiGenerated?: boolean
   createdAt?: string
 }
+
+export interface TranscriptionResult {
+  text: string
+  sourceFile?: string
+  confidence?: number
+  language?: string
+  processingTimeMs?: number
+}

@@ -100,6 +100,35 @@ public class RecommendationService {
         return toRecommendationResponse(recommendation);
     }
 
+    @Transactional(readOnly = true)
+    public List<RecommendationResponse> getAllRecommendations() {
+        return recommendationRepository.findAll().stream()
+            .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+            .map(this::toRecommendationResponse)
+            .collect(Collectors.toList());
+    }
+
+    public RecommendationResponse markRecommendationDone(Long recommendationId) {
+        Recommendation recommendation = recommendationRepository.findById(recommendationId)
+            .orElseThrow(() -> new IllegalArgumentException("Recommendation not found with id: " + recommendationId));
+
+        recommendation.setIsApplied(true);
+        recommendation.setAppliedAt(LocalDateTime.now());
+
+        Recommendation updatedRecommendation = recommendationRepository.save(recommendation);
+        return toRecommendationResponse(updatedRecommendation);
+    }
+
+    public RecommendationResponse markRecommendationPlanned(Long recommendationId) {
+        Recommendation recommendation = recommendationRepository.findById(recommendationId)
+            .orElseThrow(() -> new IllegalArgumentException("Recommendation not found with id: " + recommendationId));
+
+        recommendation.setIsApplied(false);
+
+        Recommendation updatedRecommendation = recommendationRepository.save(recommendation);
+        return toRecommendationResponse(updatedRecommendation);
+    }
+
     private RecommendationResponse toRecommendationResponse(Recommendation recommendation) {
         return RecommendationResponse.builder()
             .id(recommendation.getId())
@@ -108,6 +137,7 @@ public class RecommendationService {
             .text(recommendation.getText())
             .type(recommendation.getType())
             .priority(recommendation.getPriority())
+            .status(recommendation.getIsApplied() ? "DONE" : "PLANNED")
             .isApplied(recommendation.getIsApplied())
             .appliedAt(recommendation.getAppliedAt())
             .createdAt(recommendation.getCreatedAt())
