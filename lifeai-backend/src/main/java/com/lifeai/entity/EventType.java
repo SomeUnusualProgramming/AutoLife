@@ -1,7 +1,7 @@
 package com.lifeai.entity;
 
 public enum EventType {
-    MEAL,
+    FOOD,
     ACTIVITY,
     DOCTOR_VISIT,
     MEDICATION,
