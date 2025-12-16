@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final CalendarService calendarService;
 
     public EventResponse createEvent(CreateEventRequest request) {
         Event event = Event.builder()
@@ -30,6 +31,17 @@ public class EventService {
             .build();
 
         Event savedEvent = eventRepository.save(event);
+        
+        if (EventType.MEDICAL == savedEvent.getType()) {
+            calendarService.createCalendarEntryForMedicalEvent(
+                savedEvent.getUserId(),
+                savedEvent.getId(),
+                "Medical Event: " + savedEvent.getDescription(),
+                savedEvent.getDescription(),
+                savedEvent.getTimestamp()
+            );
+        }
+        
         return toEventResponse(savedEvent);
     }
 
