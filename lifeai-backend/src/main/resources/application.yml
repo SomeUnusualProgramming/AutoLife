@@ -44,3 +44,9 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+
+ai:
+  service:
+    enabled: false
+    url: http://localhost:8081
+    timeout: 30
