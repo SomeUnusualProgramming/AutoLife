@@ -46,10 +46,12 @@ export const useSendEvent = () => {
 
     try {
       const response = await eventApi.sendEvent(event)
-      if (response.data) {
+      if (response.success && response.data) {
         setData(response.data)
         setStatus('success')
         return response.data
+      } else {
+        throw new Error('Invalid response from server')
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to send event'
@@ -68,6 +70,11 @@ export const useTimeline = (limit?: number, offset?: number, userId?: number) =>
   const [error, setError] = useState<Error | null>(null)
 
   const fetch = useCallback(async () => {
+    if (userId === undefined || userId === null) {
+      setStatus('idle')
+      return
+    }
+
     setStatus('pending')
     setData(null)
     setError(null)
@@ -100,6 +107,11 @@ export const useRecommendations = (category?: string, userId?: number) => {
   const [error, setError] = useState<Error | null>(null)
 
   const fetch = useCallback(async () => {
+    if (userId === undefined || userId === null) {
+      setStatus('idle')
+      return
+    }
+
     setStatus('pending')
     setData(null)
     setError(null)

@@ -1,29 +1,45 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useSendEvent, useTimeline, useRecommendations, useUser } from '../hooks'
 import { Event } from '../types'
 import { Timeline } from './Timeline'
 import { AudioRecorder } from './AudioRecorder'
+import { SkeletonLoader } from './SkeletonLoader'
+import { Calendar } from './Calendar'
 
 export const Dashboard = () => {
   const [inputValue, setInputValue] = useState('')
   const [transcriptionRecommendations, setTranscriptionRecommendations] = useState<any[]>([])
+  const [timelineRefreshKey, setTimelineRefreshKey] = useState(0)
   
   const { userId, isLoading: userLoading } = useUser()
   const { send: sendEvent, status: sendStatus, error: sendError } = useSendEvent()
-  const { fetch: fetchTimeline } = useTimeline(50, 0, userId || undefined)
+  const { fetch: fetchTimeline, data: timelineData } = useTimeline(50, 0, userId || undefined)
   const { fetch: fetchRecommendations, status: recStatus, data: recData, error: recError } = useRecommendations(undefined, userId || undefined)
 
+  useEffect(() => {
+    if (!userLoading && userId) {
+      fetchTimeline()
+      fetchRecommendations()
+    }
+  }, [userId, userLoading, fetchTimeline, fetchRecommendations])
+
   const handleAddEvent = async () => {
-    if (inputValue.trim()) {
+    if (inputValue.trim() && userId) {
       try {
+        console.log('Creating event with userId:', userId)
         const newEvent: Event = {
-          type: 'user_input',
+          userId,
+          type: 'OTHER',
           description: inputValue,
           timestamp: new Date().toISOString()
         }
+        console.log('Sending event:', newEvent)
         await sendEvent(newEvent)
+        console.log('Event sent successfully')
         setInputValue('')
-        await fetchTimeline()
+        console.log('Triggering timeline refresh...')
+        setTimelineRefreshKey(prev => prev + 1)
+        console.log('Timeline refresh triggered')
       } catch (error) {
         console.error('Failed to send event:', error)
       }
@@ -133,11 +149,15 @@ export const Dashboard = () => {
               </div>
             </div>
 
-            <Timeline limit={50} userId={userId || undefined} />
+            <Timeline limit={50} userId={userId || undefined} refreshKey={timelineRefreshKey} />
           </div>
 
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-6">
+          <div className="lg:col-span-1 space-y-6">
+            <div className="sticky top-6">
+              <Calendar entries={timelineData?.entries || []} />
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-80">
               <div className="flex justify-between items-center mb-5">
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900">💡 AI Suggestions</h2>
@@ -153,11 +173,8 @@ export const Dashboard = () => {
               </div>
               
               {recStatus === 'pending' && (
-                <div className="text-center py-10">
-                  <div className="inline-block">
-                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-emerald-200 border-t-emerald-600"></div>
-                  </div>
-                  <p className="text-gray-500 text-xs mt-3">Analyzing your data...</p>
+                <div className="py-2">
+                  <SkeletonLoader type="recommendations" count={3} />
                 </div>
               )}
               
@@ -169,8 +186,10 @@ export const Dashboard = () => {
               
               {recStatus === 'success' && allRecommendations.length === 0 && (
                 <div className="text-center py-8 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-500">No suggestions yet</p>
-                  <p className="text-xs text-gray-400 mt-1">Add more events to get AI suggestions</p>
+                  <p className="text-2xl mb-2">✨</p>
+                  <p className="text-sm text-gray-700 font-medium">No suggestions yet</p>
+                  <p className="text-xs text-gray-600 mt-2 mb-3">Add at least a few events to receive personalized suggestions</p>
+                  <p className="text-xs text-gray-500">Start by recording your activity or describing events in the field below</p>
                 </div>
               )}
               
@@ -195,7 +214,7 @@ export const Dashboard = () => {
                               rec.priority === 'medium' ? 'bg-amber-100 text-amber-700' :
                               'bg-emerald-100 text-emerald-700'
                             }`}>
-                              {rec.priority === 'high' ? 'Ważne' : rec.priority === 'medium' ? 'Średnie' : 'Podstawowe'}
+                              {rec.priority === 'high' ? 'High' : rec.priority === 'medium' ? 'Medium' : 'Low'}
                             </span>
                           </div>
                         </div>
