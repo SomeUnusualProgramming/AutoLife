@@ -129,10 +129,11 @@ const isToday = (dateStr: string): boolean => {
 interface TimelineProps {
   limit?: number
   offset?: number
+  userId?: number
 }
 
-export const Timeline: React.FC<TimelineProps> = ({ limit = 50, offset = 0 }) => {
-  const { fetch: fetchTimeline, status: timelineStatus, data: timelineData, error: timelineError } = useTimeline(limit, offset)
+export const Timeline: React.FC<TimelineProps> = ({ limit = 50, offset = 0, userId }) => {
+  const { fetch: fetchTimeline, status: timelineStatus, data: timelineData, error: timelineError } = useTimeline(limit, offset, userId)
 
   const displayGroups = timelineData?.entries ? groupEntriesByDay(timelineData.entries) : []
 

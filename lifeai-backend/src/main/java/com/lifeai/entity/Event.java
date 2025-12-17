@@ -17,9 +17,9 @@ import java.util.Map;
 
 @Entity
 @Table(name = "events", indexes = {
-    @Index(name = "idx_user_id", columnList = "user_id"),
-    @Index(name = "idx_event_type", columnList = "event_type"),
-    @Index(name = "idx_event_timestamp", columnList = "event_timestamp")
+    @Index(name = "idx_events_user_id", columnList = "user_id"),
+    @Index(name = "idx_events_event_type", columnList = "event_type"),
+    @Index(name = "idx_events_event_timestamp", columnList = "event_timestamp")
 })
 @Getter
 @Setter
@@ -46,7 +46,6 @@ public class Event extends BaseEntity {
     private LocalDateTime timestamp;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
     @Builder.Default
     private Map<String, Object> metadata = new HashMap<>();
 }

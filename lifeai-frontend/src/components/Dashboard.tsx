@@ -1,15 +1,17 @@
-import { useState } from 'react'
-import { useSendEvent, useTimeline, useRecommendations } from '../hooks'
+import { useState, useCallback } from 'react'
+import { useSendEvent, useTimeline, useRecommendations, useUser } from '../hooks'
 import { Event } from '../types'
 import { Timeline } from './Timeline'
 import { AudioRecorder } from './AudioRecorder'
 
 export const Dashboard = () => {
   const [inputValue, setInputValue] = useState('')
+  const [transcriptionRecommendations, setTranscriptionRecommendations] = useState<any[]>([])
   
+  const { userId, isLoading: userLoading } = useUser()
   const { send: sendEvent, status: sendStatus, error: sendError } = useSendEvent()
-  const { fetch: fetchTimeline } = useTimeline(50)
-  const { fetch: fetchRecommendations, status: recStatus, data: recData, error: recError } = useRecommendations()
+  const { fetch: fetchTimeline } = useTimeline(50, 0, userId || undefined)
+  const { fetch: fetchRecommendations, status: recStatus, data: recData, error: recError } = useRecommendations(undefined, userId || undefined)
 
   const handleAddEvent = async () => {
     if (inputValue.trim()) {
@@ -38,17 +40,61 @@ export const Dashboard = () => {
     setInputValue((prev) => (prev ? prev + ' ' + text : text))
   }
 
+  const handleEventCreated = useCallback(async (event: any) => {
+    console.log('Event created from transcription:', event)
+    await fetchTimeline()
+  }, [fetchTimeline])
+
+  const handleRecommendationsReceived = useCallback((recommendations: any[]) => {
+    console.log('Recommendations received from transcription:', recommendations)
+    setTranscriptionRecommendations(recommendations)
+    if (recommendations.length > 0) {
+      fetchRecommendations()
+    }
+  }, [fetchRecommendations])
+
+  if (userLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 py-8 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-emerald-200 border-t-emerald-600 mb-4"></div>
+          <p className="text-gray-600">Loading LifeAI...</p>
+        </div>
+      </div>
+    )
+  }
+
+  const allRecommendations = [
+    ...transcriptionRecommendations.map(rec => ({
+      id: String(rec.id),
+      category: rec.type || 'Health',
+      suggestion: rec.text,
+      priority: (rec.priority?.toLowerCase() || 'medium') as 'low' | 'medium' | 'high',
+      status: rec.isApplied ? 'DONE' : 'PLANNED' as const,
+    })),
+    ...(recData?.map(rec => ({
+      ...rec,
+      suggestion: rec.suggestion || (rec as any).text,
+      category: rec.category || (rec as any).type,
+      priority: (rec.priority?.toLowerCase() || 'medium') as 'low' | 'medium' | 'high'
+    })) || [])
+  ]
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-emerald-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">LifeAI</h1>
-          <p className="text-gray-600 text-sm">Track your events and get personalized suggestions for a healthier lifestyle</p>
+          <p className="text-gray-600 text-sm">Track your events and get personalized suggestions for a healthier lifestyle {userId && `(User #${userId})`}</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <AudioRecorder onTranscriptionComplete={handleTranscriptionComplete} />
+            <AudioRecorder 
+              onTranscriptionComplete={handleTranscriptionComplete}
+              onEventCreated={handleEventCreated}
+              onRecommendationsReceived={handleRecommendationsReceived}
+            />
             
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Add New Event</h2>
@@ -87,7 +133,7 @@ export const Dashboard = () => {
               </div>
             </div>
 
-            <Timeline limit={50} />
+            <Timeline limit={50} userId={userId || undefined} />
           </div>
 
           <div className="lg:col-span-1">
@@ -95,7 +141,7 @@ export const Dashboard = () => {
               <div className="flex justify-between items-center mb-5">
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900">💡 AI Suggestions</h2>
-                  <p className="text-xs text-gray-500 mt-1">Based on your last 7 days</p>
+                  <p className="text-xs text-gray-500 mt-1">Based on your activity</p>
                 </div>
                 <button
                   onClick={() => fetchRecommendations()}
@@ -121,16 +167,16 @@ export const Dashboard = () => {
                 </div>
               )}
               
-              {recStatus === 'success' && recData && recData.length === 0 && (
+              {recStatus === 'success' && allRecommendations.length === 0 && (
                 <div className="text-center py-8 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-500">No suggestions yet</p>
                   <p className="text-xs text-gray-400 mt-1">Add more events to get AI suggestions</p>
                 </div>
               )}
               
-              {recStatus === 'success' && recData && (
+              {allRecommendations.length > 0 && (
                 <div className="space-y-3">
-                  {recData.slice(0, 5).map((rec) => (
+                  {allRecommendations.slice(0, 5).map((rec) => (
                     <div key={rec.id} className={`p-3.5 rounded-lg border transition-all ${
                       rec.priority === 'high' ? 'bg-rose-50 border-rose-100 hover:border-rose-200' :
                       rec.priority === 'medium' ? 'bg-amber-50 border-amber-100 hover:border-amber-200' :
