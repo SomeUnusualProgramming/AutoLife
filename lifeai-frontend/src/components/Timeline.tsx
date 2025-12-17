@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { useTimeline } from '../hooks'
 import { TimelineEntry } from '../types'
+import { SkeletonLoader } from './SkeletonLoader'
 
 interface TimelineGroup {
   date: string
@@ -16,7 +18,7 @@ const groupEntriesByDay = (entries: TimelineEntry[]): TimelineGroup[] => {
   const grouped = new Map<string, TimelineEntry[]>()
 
   entries.forEach((entry) => {
-    const date = new Date(entry.createdAt).toLocaleDateString('pl-PL')
+    const date = new Date(entry.createdAt).toLocaleDateString('en-US')
     if (!grouped.has(date)) {
       grouped.set(date, [])
     }
@@ -40,13 +42,13 @@ const groupEntriesByDay = (entries: TimelineEntry[]): TimelineGroup[] => {
 const getTimePeriod = (dateStr: string): { period: string; icon: string } => {
   const hour = new Date(dateStr).getHours()
   if (hour >= 5 && hour < 12) {
-    return { period: 'Poranek', icon: '🌅' }
+    return { period: 'Morning', icon: '🌅' }
   } else if (hour >= 12 && hour < 17) {
-    return { period: 'Południe', icon: '☀️' }
+    return { period: 'Afternoon', icon: '☀️' }
   } else if (hour >= 17 && hour < 21) {
-    return { period: 'Wieczór', icon: '🌆' }
+    return { period: 'Evening', icon: '🌆' }
   } else {
-    return { period: 'Noc', icon: '🌙' }
+    return { period: 'Night', icon: '🌙' }
   }
 }
 
@@ -69,13 +71,13 @@ const getEventHealthStatus = (description: string): { isHealthy: boolean; reason
   const hasUnhealthy = unhealthyKeywords.some(kw => lowerDesc.includes(kw))
   
   if (hasUnhealthy && !hasHealthy) {
-    return { isHealthy: false, reason: 'Niezdrowe' }
+    return { isHealthy: false, reason: 'Unhealthy' }
   }
   if (hasHealthy && !hasUnhealthy) {
-    return { isHealthy: true, reason: 'Zdrowe' }
+    return { isHealthy: true, reason: 'Healthy' }
   }
   
-  return { isHealthy: true, reason: 'Neutralne' }
+  return { isHealthy: true, reason: 'Neutral' }
 }
 
 const groupEntriesByTimePeriod = (entries: TimelineEntry[]): TimePeriodGroup[] => {
@@ -89,7 +91,7 @@ const groupEntriesByTimePeriod = (entries: TimelineEntry[]): TimePeriodGroup[] =
     grouped.get(period)!.push(entry)
   })
 
-  const periodOrder = ['Poranek', 'Południe', 'Wieczór', 'Noc']
+  const periodOrder = ['Morning', 'Afternoon', 'Evening', 'Night']
   const result: TimePeriodGroup[] = []
 
   periodOrder.forEach((period) => {
@@ -107,14 +109,14 @@ const groupEntriesByTimePeriod = (entries: TimelineEntry[]): TimePeriodGroup[] =
 }
 
 const formatTime = (dateStr: string): string => {
-  return new Date(dateStr).toLocaleTimeString('pl-PL', {
+  return new Date(dateStr).toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
   })
 }
 
 const formatDate = (dateStr: string): string => {
-  return new Date(dateStr).toLocaleDateString('pl-PL', {
+  return new Date(dateStr).toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -122,7 +124,7 @@ const formatDate = (dateStr: string): string => {
 }
 
 const isToday = (dateStr: string): boolean => {
-  const today = new Date().toLocaleDateString('pl-PL')
+  const today = new Date().toLocaleDateString('en-US')
   return dateStr === today
 }
 
@@ -130,47 +132,55 @@ interface TimelineProps {
   limit?: number
   offset?: number
   userId?: number
+  refreshKey?: number
 }
 
-export const Timeline: React.FC<TimelineProps> = ({ limit = 50, offset = 0, userId }) => {
+export const Timeline: React.FC<TimelineProps> = ({ limit = 50, offset = 0, userId, refreshKey = 0 }) => {
   const { fetch: fetchTimeline, status: timelineStatus, data: timelineData, error: timelineError } = useTimeline(limit, offset, userId)
+  
+  useEffect(() => {
+    if (userId) {
+      fetchTimeline()
+    }
+  }, [refreshKey, userId, fetchTimeline])
 
   const displayGroups = timelineData?.entries ? groupEntriesByDay(timelineData.entries) : []
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900">Dziennik dnia</h2>
+        <h2 className="text-2xl font-semibold text-gray-900">Daily Journal</h2>
         <button
           onClick={() => fetchTimeline()}
           disabled={timelineStatus === 'pending'}
           className="text-sm px-3 py-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-50"
         >
-          {timelineStatus === 'pending' ? '↻ Ładowanie...' : '↻ Odśwież'}
+          {timelineStatus === 'pending' ? '↻ Loading...' : '↻ Refresh'}
         </button>
       </div>
 
       {timelineStatus === 'pending' && (
-        <div className="text-center py-12">
-          <div className="inline-block">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-emerald-200 border-t-emerald-600"></div>
-          </div>
-          <p className="text-gray-500 mt-3">Ładowanie...</p>
+        <div className="py-4">
+          <SkeletonLoader type="timeline" count={2} />
         </div>
       )}
 
       {timelineError && (
         <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg mb-4">
-          <p className="text-sm text-rose-700">Błąd: {timelineError.message}</p>
+          <p className="text-sm text-rose-700">Error: {timelineError.message}</p>
         </div>
       )}
 
-      {timelineStatus === 'success' && displayGroups.length === 0 ? (
+      {timelineStatus === 'success' && displayGroups.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">Brak zdarzeń</p>
-          <p className="text-gray-400 text-sm mt-2">Dodaj swoje pierwsze zdarzenie aby zacząć</p>
+          <p className="text-4xl mb-4">📅</p>
+          <p className="text-gray-900 text-lg font-medium mb-1">No events</p>
+          <p className="text-gray-600 text-sm mb-4">Add your first event to start tracking activities</p>
+          <p className="text-gray-500 text-xs">You can record voice or type text in the field below</p>
         </div>
-      ) : timelineStatus === 'success' && (
+      )}
+
+      {timelineStatus === 'success' && displayGroups.length > 0 && (
         <div className="space-y-8">
           {displayGroups.map((group) => (
             <div key={group.date} className="timeline-day-group">
@@ -180,7 +190,7 @@ export const Timeline: React.FC<TimelineProps> = ({ limit = 50, offset = 0, user
                 </h3>
                 {isToday(group.date) && (
                   <span className="inline-block px-2.5 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full">
-                    Dzisiaj
+                    Today
                   </span>
                 )}
               </div>
@@ -230,7 +240,7 @@ export const Timeline: React.FC<TimelineProps> = ({ limit = 50, offset = 0, user
                                   <div className="flex gap-2 text-xs text-gray-600">
                                     <span>{formatTime(entry.createdAt)}</span>
                                     <span>•</span>
-                                    <span>Ważność: <span className="font-medium">{entry.importance}</span>/10</span>
+                                    <span>Importance: <span className="font-medium">{entry.importance}</span>/10</span>
                                   </div>
                                 </div>
                               </div>

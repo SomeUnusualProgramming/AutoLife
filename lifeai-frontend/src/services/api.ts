@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Event, Timeline, Recommendation, ApiResponse, TranscriptionWithEventResponse } from '../types'
+import { Event, Timeline, Recommendation, ApiResponse, TranscriptionWithEventResponse, TimelineEntry } from '../types'
 
 const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_URL) {
@@ -29,11 +29,64 @@ apiClient.interceptors.response.use(
   }
 )
 
+const transformTimelineResponse = (backendResponse: any): Timeline => {
+  if (backendResponse.entries) {
+    return backendResponse as Timeline
+  }
+
+  if (backendResponse.days && Array.isArray(backendResponse.days)) {
+    const entries: TimelineEntry[] = []
+    let entryId = 1
+
+    backendResponse.days.forEach((day: any) => {
+      if (day.events && Array.isArray(day.events)) {
+        day.events.forEach((event: any) => {
+          entries.push({
+            id: `timeline-${entryId++}`,
+            event: {
+              id: event.id?.toString(),
+              type: event.type,
+              description: event.description,
+              timestamp: event.timestamp,
+              metadata: event.metadata || {},
+            },
+            createdAt: event.timestamp,
+            importance: 5,
+          })
+        })
+      }
+    })
+
+    return {
+      entries,
+      total: backendResponse.totalEvents || entries.length,
+    }
+  }
+
+  return { entries: [], total: 0 }
+}
+
+const transformRecommendationResponse = (rec: any): Recommendation => {
+  return {
+    id: String(rec.id),
+    category: rec.category || rec.type || 'HEALTH',
+    suggestion: rec.suggestion || rec.text || '',
+    priority: (rec.priority?.toLowerCase() || 'medium') as 'low' | 'medium' | 'high',
+    status: (rec.status === 'DONE' || rec.isApplied ? 'DONE' : 'PLANNED') as 'PLANNED' | 'DONE',
+    actionUrl: rec.actionUrl,
+    aiGenerated: rec.aiGenerated || false,
+    createdAt: rec.createdAt,
+  }
+}
+
 export const eventApi = {
   async sendEvent(event: Event): Promise<ApiResponse<Event>> {
     try {
-      const response = await apiClient.post<ApiResponse<Event>>('/api/events', event)
-      return response.data
+      const response = await apiClient.post<Event>('/api/events', event)
+      return {
+        success: true,
+        data: response.data
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw new Error(error.response?.data?.error || 'Failed to send event')
@@ -54,8 +107,13 @@ export const timelineApi = {
       const queryString = params.toString()
       const url = queryString ? `/api/timeline?${queryString}` : '/api/timeline'
       
-      const response = await apiClient.get<ApiResponse<Timeline>>(url)
-      return response.data
+      const response = await apiClient.get<ApiResponse<any>>(url)
+      const transformedData = transformTimelineResponse(response.data.data || response.data)
+      
+      return {
+        success: response.data.success,
+        data: transformedData,
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw new Error(error.response?.data?.error || 'Failed to fetch timeline')
@@ -68,15 +126,28 @@ export const timelineApi = {
 export const recommendationsApi = {
   async getRecommendations(category?: string, userId?: number): Promise<ApiResponse<Recommendation[]>> {
     try {
+      let url = '/api/recommendations'
+      
+      if (userId !== undefined) {
+        url = `/api/recommendations/users/${userId}`
+      }
+      
       const params = new URLSearchParams()
-      if (userId !== undefined) params.append('userId', String(userId))
       if (category) params.append('category', category)
       
       const queryString = params.toString()
-      const url = queryString ? `/api/recommendations?${queryString}` : '/api/recommendations'
+      if (queryString) {
+        url += `?${queryString}`
+      }
       
-      const response = await apiClient.get<ApiResponse<Recommendation[]>>(url)
-      return response.data
+      const response = await apiClient.get<ApiResponse<any[]>>(url)
+      const recs = Array.isArray(response.data) ? response.data : response.data.data || []
+      const transformedRecs = recs.map(transformRecommendationResponse)
+      
+      return {
+        success: response.data.success !== false,
+        data: transformedRecs,
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw new Error(error.response?.data?.error || 'Failed to fetch recommendations')
@@ -87,10 +158,14 @@ export const recommendationsApi = {
 
   async markRecommendationDone(id: string): Promise<ApiResponse<Recommendation>> {
     try {
-      const response = await apiClient.patch<ApiResponse<Recommendation>>(
+      const response = await apiClient.patch<ApiResponse<any>>(
         `/api/recommendations/${id}/done`
       )
-      return response.data
+      const transformedRec = transformRecommendationResponse(response.data.data || response.data)
+      return {
+        success: response.data.success,
+        data: transformedRec,
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw new Error(error.response?.data?.error || 'Failed to update recommendation')
@@ -101,10 +176,14 @@ export const recommendationsApi = {
 
   async markRecommendationPlanned(id: string): Promise<ApiResponse<Recommendation>> {
     try {
-      const response = await apiClient.patch<ApiResponse<Recommendation>>(
+      const response = await apiClient.patch<ApiResponse<any>>(
         `/api/recommendations/${id}/planned`
       )
-      return response.data
+      const transformedRec = transformRecommendationResponse(response.data.data || response.data)
+      return {
+        success: response.data.success,
+        data: transformedRec,
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         throw new Error(error.response?.data?.error || 'Failed to update recommendation')

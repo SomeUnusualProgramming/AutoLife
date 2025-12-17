@@ -12,6 +12,7 @@ export interface User {
 
 export interface Event {
   id?: string
+  userId?: number
   type: string
   description: string
   timestamp?: string

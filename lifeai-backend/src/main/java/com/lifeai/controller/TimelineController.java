@@ -21,9 +21,14 @@ public class TimelineController {
 
     @GetMapping
     public ResponseEntity<TimelineResponse> getTimeline(
-            @RequestParam Long userId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        return ResponseEntity.ok(timelineService.getTimeline(userId, from, to));
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        
+        LocalDate fromDate = from != null ? from : LocalDate.now().minusDays(7);
+        LocalDate toDate = to != null ? to : LocalDate.now().plusDays(1);
+        Long userIdResolved = userId != null ? userId : 1L;
+        
+        return ResponseEntity.ok(timelineService.getTimeline(userIdResolved, fromDate, toDate));
     }
 }
