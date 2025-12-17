@@ -20,6 +20,28 @@ services:
     networks:
       - lifeai-network
 
+  stt:
+    build:
+      context: ./lifeai-stt
+      dockerfile: Dockerfile
+    container_name: lifeai-stt
+    ports:
+      - "5000:5000"
+    environment:
+      WHISPER_MODEL_SIZE: ${WHISPER_MODEL_SIZE:-base}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DEBUG: ${DEBUG:-False}
+    volumes:
+      - whisper_cache:/root/.cache/huggingface
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 120s
+    networks:
+      - lifeai-network
+
   backend:
     build:
       context: ./lifeai-backend
@@ -32,8 +54,12 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      STT_SERVICE_URL: http://stt:5000
     depends_on:
       postgres:
+        condition: service_healthy
+      stt:
         condition: service_healthy
     networks:
       - lifeai-network
@@ -54,6 +80,7 @@ services:
 
 volumes:
   postgres_data:
+  whisper_cache:
 
 networks:
   lifeai-network:

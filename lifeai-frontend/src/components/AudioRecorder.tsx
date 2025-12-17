@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useAudioRecorder, useSpeechToText } from '../hooks'
+import { useAudioRecorder, useSpeechToText, useUser } from '../hooks'
 
 interface AudioRecorderProps {
   onTranscriptionComplete?: (text: string) => void
+  onEventCreated?: (event: any) => void
+  onRecommendationsReceived?: (recommendations: any[]) => void
 }
 
-export const AudioRecorder = ({ onTranscriptionComplete }: AudioRecorderProps) => {
+export const AudioRecorder = ({ onTranscriptionComplete, onEventCreated, onRecommendationsReceived }: AudioRecorderProps) => {
+  const { userId } = useUser()
   const { isRecording, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder()
-  const { status: transcriptionStatus, transcribedText, error: transcriptionError, transcribe } = useSpeechToText()
+  const { status: transcriptionStatus, transcribedText, event, recommendations, error: transcriptionError, transcribe } = useSpeechToText()
   const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
@@ -15,7 +18,7 @@ export const AudioRecorder = ({ onTranscriptionComplete }: AudioRecorderProps) =
       const autoTranscribe = async () => {
         setIsProcessing(true)
         try {
-          await transcribe(audioBlob)
+          await transcribe(audioBlob, undefined, userId || undefined)
         } catch (error) {
           console.error('Auto-transcription failed:', error)
         } finally {
@@ -24,7 +27,19 @@ export const AudioRecorder = ({ onTranscriptionComplete }: AudioRecorderProps) =
       }
       autoTranscribe()
     }
-  }, [audioBlob, transcribedText, isProcessing, transcribe])
+  }, [audioBlob, transcribedText, isProcessing, transcribe, userId])
+
+  useEffect(() => {
+    if (event && onEventCreated) {
+      onEventCreated(event)
+    }
+  }, [event, onEventCreated])
+
+  useEffect(() => {
+    if (recommendations && recommendations.length > 0 && onRecommendationsReceived) {
+      onRecommendationsReceived(recommendations)
+    }
+  }, [recommendations, onRecommendationsReceived])
 
   const handleStartRecording = async () => {
     try {
@@ -43,7 +58,7 @@ export const AudioRecorder = ({ onTranscriptionComplete }: AudioRecorderProps) =
 
     setIsProcessing(true)
     try {
-      await transcribe(audioBlob)
+      await transcribe(audioBlob, undefined, userId || undefined)
     } catch (error) {
       console.error('Transcription failed:', error)
     } finally {
@@ -100,7 +115,7 @@ export const AudioRecorder = ({ onTranscriptionComplete }: AudioRecorderProps) =
         </div>
       )}
 
-      {audioBlob && !transcribedText && (
+      {audioBlob && !transcribedText && !transcriptionError && (
         <div className="space-y-4">
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
             <p className="text-sm text-emerald-800">
@@ -137,6 +152,35 @@ export const AudioRecorder = ({ onTranscriptionComplete }: AudioRecorderProps) =
         </div>
       )}
 
+      {audioBlob && !transcribedText && transcriptionError && (
+        <div className="space-y-4">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+            <p className="text-sm text-emerald-800">
+              ✓ Recording ready ({(audioBlob.size / 1024).toFixed(2)} KB)
+            </p>
+          </div>
+          <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
+            <p className="text-sm text-rose-700 mb-3">
+              <span className="font-medium">Error:</span> {transcriptionError.message}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={handleTranscribe}
+                className="text-sm bg-rose-600 hover:bg-rose-700 text-white font-medium py-2 px-3 rounded transition-colors"
+              >
+                Retry Transcription
+              </button>
+              <button
+                onClick={handleDiscard}
+                className="text-sm bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-3 rounded transition-colors"
+              >
+                Delete Recording
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {transcribedText && (
         <div className="space-y-4">
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
@@ -159,14 +203,6 @@ export const AudioRecorder = ({ onTranscriptionComplete }: AudioRecorderProps) =
               Cancel
             </button>
           </div>
-        </div>
-      )}
-
-      {transcriptionError && (
-        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mt-4">
-          <p className="text-sm text-rose-700">
-            <span className="font-medium">Error:</span> {transcriptionError.message}
-          </p>
         </div>
       )}
     </div>

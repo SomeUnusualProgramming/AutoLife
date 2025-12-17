@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Event, Timeline, Recommendation, ApiResponse, TranscriptionResult } from '../types'
+import { Event, Timeline, Recommendation, ApiResponse, TranscriptionWithEventResponse } from '../types'
 
 const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_URL) {
@@ -13,7 +13,7 @@ const getApiBaseUrl = () => {
 
 export const apiClient = axios.create({
   baseURL: getApiBaseUrl(),
-  timeout: 10000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -44,9 +44,10 @@ export const eventApi = {
 }
 
 export const timelineApi = {
-  async getTimeline(limit?: number, offset?: number): Promise<ApiResponse<Timeline>> {
+  async getTimeline(limit?: number, offset?: number, userId?: number): Promise<ApiResponse<Timeline>> {
     try {
       const params = new URLSearchParams()
+      if (userId !== undefined) params.append('userId', String(userId))
       if (limit !== undefined) params.append('limit', String(limit))
       if (offset !== undefined) params.append('offset', String(offset))
       
@@ -65,9 +66,10 @@ export const timelineApi = {
 }
 
 export const recommendationsApi = {
-  async getRecommendations(category?: string): Promise<ApiResponse<Recommendation[]>> {
+  async getRecommendations(category?: string, userId?: number): Promise<ApiResponse<Recommendation[]>> {
     try {
       const params = new URLSearchParams()
+      if (userId !== undefined) params.append('userId', String(userId))
       if (category) params.append('category', category)
       
       const queryString = params.toString()
@@ -113,50 +115,74 @@ export const recommendationsApi = {
 }
 
 export const speechToTextApi = {
-  async transcribeAudio(audioFile: File, language?: string): Promise<TranscriptionResult> {
+  async transcribeAudio(audioFile: File, language?: string, userId?: number): Promise<TranscriptionWithEventResponse> {
     try {
       const formData = new FormData()
       formData.append('file', audioFile)
       if (language) formData.append('language', language)
+      if (userId) formData.append('userId', String(userId))
 
-      const response = await apiClient.post<TranscriptionResult>(
-        '/speech-to-text/transcribe',
+      const response = await apiClient.post<TranscriptionWithEventResponse>(
+        '/api/speech-to-text/transcribe',
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          timeout: 60000,
         }
       )
-      return response.data
+      
+      if (response.data.transcription) {
+        return response.data
+      }
+      
+      throw new Error('Invalid transcription response format')
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.error || 'Failed to transcribe audio')
+        const errorMessage = 
+          error.response?.data?.error || 
+          error.response?.data?.detail || 
+          error.response?.statusText || 
+          'Failed to transcribe audio'
+        throw new Error(errorMessage)
       }
       throw error
     }
   },
 
-  async transcribeAudioBytes(audioBytes: Blob, mimeType: string, language?: string): Promise<TranscriptionResult> {
+  async transcribeAudioBytes(audioBytes: Blob, mimeType: string, language?: string, userId?: number): Promise<TranscriptionWithEventResponse> {
     try {
       const formData = new FormData()
       formData.append('audioBytes', audioBytes)
       formData.append('mimeType', mimeType)
       if (language) formData.append('language', language)
+      if (userId) formData.append('userId', String(userId))
 
-      const response = await apiClient.post<TranscriptionResult>(
-        '/speech-to-text/transcribe-bytes',
+      const response = await apiClient.post<TranscriptionWithEventResponse>(
+        '/api/speech-to-text/transcribe-bytes',
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          timeout: 60000,
         }
       )
-      return response.data
+      
+      if (response.data.transcription) {
+        return response.data
+      }
+      
+      throw new Error('Invalid transcription response format')
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.error || 'Failed to transcribe audio')
+        const errorMessage = 
+          error.response?.data?.error || 
+          error.response?.data?.detail || 
+          error.response?.statusText || 
+          'Failed to transcribe audio'
+        throw new Error(errorMessage)
       }
       throw error
     }
