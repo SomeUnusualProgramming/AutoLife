@@ -48,3 +48,26 @@ export interface TranscriptionResult {
   language?: string
   processingTimeMs?: number
 }
+
+export interface TranscriptionWithEventResponse {
+  transcription: TranscriptionResult
+  event?: {
+    id: number
+    userId: number
+    type: string
+    description: string
+    timestamp: string
+    metadata?: Record<string, unknown>
+  }
+  recommendations?: Array<{
+    id: number
+    userId: number
+    eventId: number
+    text: string
+    type: string
+    priority: 'HIGH' | 'MEDIUM' | 'LOW'
+    status: string
+    isApplied?: boolean
+    createdAt?: string
+  }>
+}

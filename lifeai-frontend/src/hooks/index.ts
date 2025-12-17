@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { Event, Timeline, Recommendation, TranscriptionResult } from '../types'
+import { Event, Timeline, Recommendation, TranscriptionWithEventResponse } from '../types'
 import { eventApi, timelineApi, recommendationsApi, speechToTextApi } from '../services/api'
+export { useUser } from './useUser'
 
 export const useAsync = <T,>(
   asyncFunction: () => Promise<T>,
@@ -61,7 +62,7 @@ export const useSendEvent = () => {
   return { send, status, data, error }
 }
 
-export const useTimeline = (limit?: number, offset?: number) => {
+export const useTimeline = (limit?: number, offset?: number, userId?: number) => {
   const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
   const [data, setData] = useState<Timeline | null>(null)
   const [error, setError] = useState<Error | null>(null)
@@ -72,7 +73,7 @@ export const useTimeline = (limit?: number, offset?: number) => {
     setError(null)
 
     try {
-      const response = await timelineApi.getTimeline(limit, offset)
+      const response = await timelineApi.getTimeline(limit, offset, userId)
       if (response.data) {
         setData(response.data)
         setStatus('success')
@@ -84,7 +85,7 @@ export const useTimeline = (limit?: number, offset?: number) => {
       setStatus('error')
       throw err
     }
-  }, [limit, offset])
+  }, [limit, offset, userId])
 
   useEffect(() => {
     fetch()
@@ -93,7 +94,7 @@ export const useTimeline = (limit?: number, offset?: number) => {
   return { fetch, status, data, error }
 }
 
-export const useRecommendations = (category?: string) => {
+export const useRecommendations = (category?: string, userId?: number) => {
   const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
   const [data, setData] = useState<Recommendation[] | null>(null)
   const [error, setError] = useState<Error | null>(null)
@@ -104,7 +105,7 @@ export const useRecommendations = (category?: string) => {
     setError(null)
 
     try {
-      const response = await recommendationsApi.getRecommendations(category)
+      const response = await recommendationsApi.getRecommendations(category, userId)
       if (response.data) {
         setData(response.data)
         setStatus('success')
@@ -116,7 +117,7 @@ export const useRecommendations = (category?: string) => {
       setStatus('error')
       throw err
     }
-  }, [category])
+  }, [category, userId])
 
   const markDone = useCallback(async (id: string) => {
     try {
@@ -220,29 +221,54 @@ export const useAudioRecorder = () => {
 export const useSpeechToText = () => {
   const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
   const [transcribedText, setTranscribedText] = useState('')
+  const [event, setEvent] = useState<any>(null)
+  const [recommendations, setRecommendations] = useState<any[]>([])
   const [error, setError] = useState<Error | null>(null)
 
-  const transcribe = useCallback(async (audioBlob: Blob, language?: string) => {
+  const transcribe = useCallback(async (audioBlob: Blob, language?: string, userId?: number) => {
     setStatus('pending')
     setError(null)
     setTranscribedText('')
+    setEvent(null)
+    setRecommendations([])
 
     try {
+      if (!audioBlob || audioBlob.size === 0) {
+        throw new Error('Audio file is empty. Please record some audio.')
+      }
+
       const audioFile = new File([audioBlob], 'recording.webm', { type: 'audio/webm' })
-      const result: TranscriptionResult = await speechToTextApi.transcribeAudio(audioFile, language)
-      setTranscribedText(result.text)
+      const result: TranscriptionWithEventResponse = await speechToTextApi.transcribeAudio(audioFile, language, userId)
+      
+      if (!result.transcription?.text || result.transcription.text.trim() === '') {
+        throw new Error('No speech detected. Please speak clearly into the microphone.')
+      }
+      
+      setTranscribedText(result.transcription.text)
+      
+      if (result.event) {
+        setEvent(result.event)
+      }
+      
+      if (result.recommendations && Array.isArray(result.recommendations)) {
+        setRecommendations(result.recommendations)
+      }
+      
       setStatus('success')
       return result
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to transcribe audio'
-      setError(new Error(message))
+      const error = new Error(message)
+      setError(error)
       setStatus('error')
-      throw err
+      throw error
     }
   }, [])
 
   const resetTranscription = useCallback(() => {
     setTranscribedText('')
+    setEvent(null)
+    setRecommendations([])
     setError(null)
     setStatus('idle')
   }, [])
@@ -250,6 +276,8 @@ export const useSpeechToText = () => {
   return {
     status,
     transcribedText,
+    event,
+    recommendations,
     error,
     transcribe,
     resetTranscription,

@@ -1,13 +1,22 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/lifeai_test
-    username: postgres
-    password: postgres
+    url: jdbc:h2:mem:lifeai_test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   
   jpa:
     hibernate:
       ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
     show-sql: false
+  
+  flyway:
+    enabled: false
+  
+  h2:
+    console:
+      enabled: true
 
 logging:
   level:
