@@ -2,6 +2,7 @@ package com.lifeai.controller;
 
 import com.lifeai.dto.CreateEventRequest;
 import com.lifeai.dto.EventResponse;
+import com.lifeai.entity.EventStatus;
 import com.lifeai.entity.EventType;
 import com.lifeai.service.EventService;
 import jakarta.validation.Valid;
@@ -49,6 +50,11 @@ public class EventController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endTime) {
         return ResponseEntity.ok(eventService.getEventsByUserIdAndDateRange(userId, startTime, endTime));
+    }
+
+    @GetMapping("/user/{userId}/pending-clarifications")
+    public ResponseEntity<List<EventResponse>> getPendingClarifications(@PathVariable Long userId) {
+        return ResponseEntity.ok(eventService.getEventsByUserIdAndStatus(userId, EventStatus.NEED_CLARIFICATION));
     }
 
     @PutMapping("/{id}")

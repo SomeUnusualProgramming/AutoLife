@@ -1,0 +1,103 @@
+{
+  "FOOD": {
+    "fields": ["description", "mealType", "timestamp", "calories"],
+    "mealTypes": ["BREAKFAST", "LUNCH", "DINNER", "SNACK", "SUPPER", "BRUNCH"],
+    "optionalFields": ["calories", "ingredients", "restaurant", "notes"],
+    "constraints": {
+      "calories": {"min": 0, "max": 10000, "type": "NUMBER"},
+      "mealType": {"type": "ENUM", "values": ["BREAKFAST", "LUNCH", "DINNER", "SNACK", "SUPPER", "BRUNCH"]}
+    }
+  },
+  "ACTIVITY": {
+    "fields": ["description", "activityType", "duration", "timestamp", "intensity"],
+    "activityTypes": ["RUNNING", "WALKING", "CYCLING", "SWIMMING", "YOGA", "GYM", "SPORTS", "OTHER"],
+    "optionalFields": ["distance", "calories_burned", "heart_rate", "elevation_gain"],
+    "constraints": {
+      "duration": {"min": 1, "max": 480, "type": "NUMBER", "unit": "MINUTES"},
+      "intensity": {"type": "ENUM", "values": ["LOW", "MODERATE", "HIGH", "VERY_HIGH"]},
+      "distance": {"min": 0, "max": 200, "type": "NUMBER", "unit": "KM"}
+    }
+  },
+  "SLEEP": {
+    "fields": ["description", "duration", "timestamp", "quality"],
+    "optionalFields": ["wakeup_count", "notes", "environment"],
+    "constraints": {
+      "duration": {"min": 1, "max": 480, "type": "NUMBER", "unit": "MINUTES"},
+      "quality": {"type": "ENUM", "values": ["POOR", "FAIR", "GOOD", "EXCELLENT"]},
+      "wakeup_count": {"min": 0, "max": 20, "type": "NUMBER"}
+    }
+  },
+  "MOOD": {
+    "fields": ["description", "mood", "timestamp", "intensity"],
+    "moods": ["HAPPY", "SAD", "ANGRY", "ANXIOUS", "CALM", "FRUSTRATED", "EXCITED", "NEUTRAL"],
+    "optionalFields": ["trigger", "notes", "medications_taken"],
+    "constraints": {
+      "mood": {"type": "ENUM", "values": ["HAPPY", "SAD", "ANGRY", "ANXIOUS", "CALM", "FRUSTRATED", "EXCITED", "NEUTRAL"]},
+      "intensity": {"min": 1, "max": 10, "type": "NUMBER"}
+    }
+  },
+  "SYMPTOM": {
+    "fields": ["description", "symptom_type", "severity", "timestamp", "location"],
+    "symptomTypes": ["HEADACHE", "FEVER", "COUGH", "NAUSEA", "RASH", "PAIN", "FATIGUE", "DIZZINESS"],
+    "optionalFields": ["duration", "triggers", "remedies_tried", "temperature"],
+    "constraints": {
+      "severity": {"type": "ENUM", "values": ["MILD", "MODERATE", "SEVERE"]},
+      "temperature": {"min": 35, "max": 43, "type": "NUMBER", "unit": "CELSIUS"},
+      "duration": {"min": 1, "max": 10080, "type": "NUMBER", "unit": "MINUTES"}
+    }
+  },
+  "MEDICATION": {
+    "fields": ["description", "medication_name", "dosage", "timestamp", "frequency"],
+    "optionalFields": ["unit", "reason", "prescriber", "side_effects", "refills_remaining"],
+    "constraints": {
+      "dosage": {"min": 0.001, "max": 10000, "type": "NUMBER"},
+      "frequency": {"type": "ENUM", "values": ["ONCE", "TWICE", "THREE_TIMES", "FOUR_TIMES", "DAILY", "AS_NEEDED"]},
+      "unit": {"type": "ENUM", "values": ["MG", "G", "ML", "DROPS", "UNITS", "IU"]}
+    }
+  },
+  "DOCTOR_VISIT": {
+    "fields": ["description", "doctor_type", "visit_type", "timestamp", "location"],
+    "doctorTypes": ["CARDIOLOGIST", "DERMATOLOGIST", "PEDIATRICIAN", "GENERAL", "DENTIST", "OPTOMETRIST"],
+    "visitTypes": ["CHECKUP", "CONSULTATION", "FOLLOW_UP", "EMERGENCY", "PROCEDURE"],
+    "optionalFields": ["diagnosis", "prescription", "next_visit", "doctor_name", "clinic"],
+    "constraints": {
+      "doctor_type": {"type": "ENUM", "values": ["CARDIOLOGIST", "DERMATOLOGIST", "PEDIATRICIAN", "GENERAL", "DENTIST", "OPTOMETRIST"]},
+      "visit_type": {"type": "ENUM", "values": ["CHECKUP", "CONSULTATION", "FOLLOW_UP", "EMERGENCY", "PROCEDURE"]}
+    }
+  },
+  "WEIGHT": {
+    "fields": ["description", "weight_value", "timestamp", "unit"],
+    "optionalFields": ["bmi", "body_fat_percentage", "muscle_mass", "notes"],
+    "constraints": {
+      "weight_value": {"min": 30, "max": 300, "type": "NUMBER"},
+      "unit": {"type": "ENUM", "values": ["KG", "LBS"]},
+      "bmi": {"min": 10, "max": 60, "type": "NUMBER"},
+      "body_fat_percentage": {"min": 0, "max": 100, "type": "NUMBER"}
+    }
+  },
+  "MEDICAL": {
+    "fields": ["description", "medical_condition", "timestamp"],
+    "optionalFields": ["severity", "onset_date", "treatment", "notes"],
+    "constraints": {
+      "severity": {"type": "ENUM", "values": ["MILD", "MODERATE", "SEVERE", "CRITICAL"]}
+    }
+  },
+  "OTHER": {
+    "fields": ["description", "timestamp"],
+    "optionalFields": ["category", "notes"],
+    "constraints": {}
+  },
+  "GLOBAL_CONSTRAINTS": {
+    "timestamp": {
+      "required": true,
+      "format": "ISO_8601",
+      "description": "Event timestamp in ISO 8601 format"
+    },
+    "description": {
+      "required": true,
+      "minLength": 1,
+      "maxLength": 5000,
+      "type": "STRING"
+    }
+  }
+}

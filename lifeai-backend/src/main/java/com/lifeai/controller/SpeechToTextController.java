@@ -1,11 +1,14 @@
 package com.lifeai.controller;
 
+import com.lifeai.dto.AiAgentRequest;
+import com.lifeai.dto.AiAgentResponse;
 import com.lifeai.dto.CreateEventRequest;
 import com.lifeai.dto.EventResponse;
 import com.lifeai.dto.RecommendationResponse;
 import com.lifeai.dto.TranscriptionResponse;
 import com.lifeai.entity.Event;
 import com.lifeai.entity.EventType;
+import com.lifeai.service.AiAgentService;
 import com.lifeai.service.EventService;
 import com.lifeai.service.RecommendationService;
 import com.lifeai.service.SpeechToTextService;
@@ -31,6 +34,7 @@ public class SpeechToTextController {
     private final SpeechToTextService speechToTextService;
     private final EventService eventService;
     private final RecommendationService recommendationService;
+    private final AiAgentService aiAgentService;
 
     @PostMapping("/transcribe")
     public ResponseEntity<Map<String, Object>> transcribeAudio(
@@ -69,39 +73,47 @@ public class SpeechToTextController {
 
         if (userId != null) {
             try {
-                EventType detectedType = detectEventType(transcribedText);
-                
-                CreateEventRequest eventRequest = CreateEventRequest.builder()
+                AiAgentRequest aiRequest = AiAgentRequest.builder()
                         .userId(userId)
-                        .type(detectedType)
-                        .description(transcribedText)
-                        .timestamp(LocalDateTime.now())
-                        .metadata(createMetadata(transcribedText))
+                        .transcribedText(transcribedText)
                         .build();
 
-                EventResponse eventResponse = eventService.createEvent(eventRequest);
-                log.info("Created event: id={}, type={}, userId={}", eventResponse.getId(), detectedType, userId);
-                response.put("event", eventResponse);
+                AiAgentResponse aiResponse = aiAgentService.analyzeUserInput(aiRequest);
+                log.info("AI analysis completed: status={}, action={}", aiResponse.getStatus(), aiResponse.getAction());
                 
-                Event event = new Event();
-                event.setId(eventResponse.getId());
-                event.setUserId(userId);
-                event.setType(detectedType);
-                event.setDescription(transcribedText);
-                event.setTimestamp(LocalDateTime.now());
-                
-                List<RecommendationResponse> recommendations = new ArrayList<>();
-                try {
-                    recommendations = recommendationService.generateRecommendationsForEvent(event);
-                    log.info("Generated {} recommendations for event id: {}", recommendations.size(), eventResponse.getId());
-                } catch (Exception e) {
-                    log.warn("Failed to generate recommendations for event: {}", e.getMessage());
+                if ("CREATE_EVENT".equals(aiResponse.getAction()) && aiResponse.getEvent() != null) {
+                    response.put("event", aiResponse.getEvent());
+                    log.info("Created event: id={}, userId={}", aiResponse.getEvent().getId(), userId);
+                    
+                    Event event = new Event();
+                    event.setId(aiResponse.getEvent().getId());
+                    event.setUserId(userId);
+                    event.setType(aiResponse.getEvent().getType());
+                    event.setDescription(aiResponse.getEvent().getDescription());
+                    event.setTimestamp(aiResponse.getEvent().getTimestamp());
+                    
+                    List<RecommendationResponse> recommendations = new ArrayList<>();
+                    try {
+                        recommendations = recommendationService.generateRecommendationsForEvent(event);
+                        log.info("Generated {} recommendations for event id: {}", recommendations.size(), aiResponse.getEvent().getId());
+                    } catch (Exception e) {
+                        log.warn("Failed to generate recommendations for event: {}", e.getMessage());
+                    }
+                    
+                    response.put("recommendations", recommendations);
+                } else if ("ASK_QUESTION".equals(aiResponse.getAction())) {
+                    response.put("event", aiResponse.getPendingEvent());
+                    response.put("clarificationQuestion", aiResponse.getClarificationQuestion());
+                    response.put("sessionId", aiResponse.getSessionId());
+                    log.info("Pending clarification: sessionId={}, round={}", aiResponse.getSessionId(), aiResponse.getClarificationRound());
+                } else {
+                    log.warn("Unhandled AI response action: {}", aiResponse.getAction());
                 }
                 
-                response.put("recommendations", recommendations);
-                
             } catch (Exception e) {
-                log.error("Failed to create event from transcription: {}", e.getMessage(), e);
+                log.error("Failed to process transcription with AI agent: {}", e.getMessage(), e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("error", "Failed to process event: " + e.getMessage()));
             }
         } else {
             log.warn("userId not provided in transcribe request");
@@ -147,45 +159,71 @@ public class SpeechToTextController {
 
         if (userId != null) {
             try {
-                EventType detectedType = detectEventType(transcribedText);
-                
-                CreateEventRequest eventRequest = CreateEventRequest.builder()
+                AiAgentRequest aiRequest = AiAgentRequest.builder()
                         .userId(userId)
-                        .type(detectedType)
-                        .description(transcribedText)
-                        .timestamp(LocalDateTime.now())
-                        .metadata(createMetadata(transcribedText))
+                        .transcribedText(transcribedText)
                         .build();
 
-                EventResponse eventResponse = eventService.createEvent(eventRequest);
-                log.info("Created event: id={}, type={}, userId={}", eventResponse.getId(), detectedType, userId);
-                response.put("event", eventResponse);
+                AiAgentResponse aiResponse = aiAgentService.analyzeUserInput(aiRequest);
+                log.info("AI analysis completed: status={}, action={}", aiResponse.getStatus(), aiResponse.getAction());
                 
-                Event event = new Event();
-                event.setId(eventResponse.getId());
-                event.setUserId(userId);
-                event.setType(detectedType);
-                event.setDescription(transcribedText);
-                event.setTimestamp(LocalDateTime.now());
-                
-                List<RecommendationResponse> recommendations = new ArrayList<>();
-                try {
-                    recommendations = recommendationService.generateRecommendationsForEvent(event);
-                    log.info("Generated {} recommendations for event id: {}", recommendations.size(), eventResponse.getId());
-                } catch (Exception e) {
-                    log.warn("Failed to generate recommendations for event: {}", e.getMessage());
+                if ("CREATE_EVENT".equals(aiResponse.getAction()) && aiResponse.getEvent() != null) {
+                    response.put("event", aiResponse.getEvent());
+                    log.info("Created event: id={}, userId={}", aiResponse.getEvent().getId(), userId);
+                    
+                    Event event = new Event();
+                    event.setId(aiResponse.getEvent().getId());
+                    event.setUserId(userId);
+                    event.setType(aiResponse.getEvent().getType());
+                    event.setDescription(aiResponse.getEvent().getDescription());
+                    event.setTimestamp(aiResponse.getEvent().getTimestamp());
+                    
+                    List<RecommendationResponse> recommendations = new ArrayList<>();
+                    try {
+                        recommendations = recommendationService.generateRecommendationsForEvent(event);
+                        log.info("Generated {} recommendations for event id: {}", recommendations.size(), aiResponse.getEvent().getId());
+                    } catch (Exception e) {
+                        log.warn("Failed to generate recommendations for event: {}", e.getMessage());
+                    }
+                    
+                    response.put("recommendations", recommendations);
+                } else if ("ASK_QUESTION".equals(aiResponse.getAction())) {
+                    response.put("event", aiResponse.getPendingEvent());
+                    response.put("clarificationQuestion", aiResponse.getClarificationQuestion());
+                    response.put("sessionId", aiResponse.getSessionId());
+                    log.info("Pending clarification: sessionId={}, round={}", aiResponse.getSessionId(), aiResponse.getClarificationRound());
+                } else {
+                    log.warn("Unhandled AI response action: {}", aiResponse.getAction());
                 }
                 
-                response.put("recommendations", recommendations);
-                
             } catch (Exception e) {
-                log.error("Failed to create event from transcription: {}", e.getMessage(), e);
+                log.error("Failed to process transcription with AI agent: {}", e.getMessage(), e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("error", "Failed to process event: " + e.getMessage()));
             }
         } else {
             log.warn("userId not provided in transcribe-bytes request");
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/process")
+    public ResponseEntity<AiAgentResponse> processEventInput(@RequestBody AiAgentRequest request) {
+        log.info("Processing event input from user: {}", request.getUserId());
+        
+        try {
+            AiAgentResponse response = aiAgentService.analyzeUserInput(request);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            log.error("Error processing event input", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(AiAgentResponse.builder()
+                    .status("ERROR")
+                    .action("IGNORE")
+                    .aiResponse("Błąd przetwarzania. Spróbuj ponownie.")
+                    .build());
+        }
     }
 
     private EventType detectEventType(String text) {

@@ -19,7 +19,8 @@ import java.util.Map;
 @Table(name = "events", indexes = {
     @Index(name = "idx_events_user_id", columnList = "user_id"),
     @Index(name = "idx_events_event_type", columnList = "event_type"),
-    @Index(name = "idx_events_event_timestamp", columnList = "event_timestamp")
+    @Index(name = "idx_events_event_timestamp", columnList = "event_timestamp"),
+    @Index(name = "idx_events_user_status", columnList = "user_id, status")
 })
 @Getter
 @Setter
@@ -48,4 +49,12 @@ public class Event extends BaseEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Builder.Default
     private Map<String, Object> metadata = new HashMap<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @Builder.Default
+    private EventStatus status = EventStatus.CONFIRMED;
+
+    @Column(name = "clarification_question", columnDefinition = "TEXT")
+    private String clarificationQuestion;
 }

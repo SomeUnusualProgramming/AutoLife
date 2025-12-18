@@ -1,0 +1,159 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.lifeai:lifeai-backend >----------------------
+[INFO] Building LifeAI Backend 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ lifeai-backend ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] Copying 8 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ lifeai-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ lifeai-backend ---
+[INFO] Copying 2 resources from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ lifeai-backend ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ lifeai-backend ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.lifeai.service.EventAnalysisTest
+[INFO] Running com.lifeai.service.EventAnalysisTest$AmbiguousCasesTests
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.189 s <<< FAILURE! -- in com.lifeai.service.EventAnalysisTest$AmbiguousCasesTests
+[ERROR] com.lifeai.service.EventAnalysisTest$AmbiguousCasesTests.testAmbiguousCasesValid -- Time elapsed: 0.178 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Ambiguous cases should be MEDIUM difficulty ==> expected: <MEDIUM> but was: <HARD>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+	at com.lifeai.service.EventAnalysisTest$AmbiguousCasesTests.lambda$1(EventAnalysisTest.java:160)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at com.lifeai.service.EventAnalysisTest$AmbiguousCasesTests.testAmbiguousCasesValid(EventAnalysisTest.java:157)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[INFO] Running com.lifeai.service.EventAnalysisTest$ClarificationThresholdTests
+? Hard cases span 11 categories
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.lifeai.service.EventAnalysisTest$ClarificationThresholdTests
+[INFO] Running com.lifeai.service.EventAnalysisTest$ClearCasesTests
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.006 s <<< FAILURE! -- in com.lifeai.service.EventAnalysisTest$ClearCasesTests
+[ERROR] com.lifeai.service.EventAnalysisTest$ClearCasesTests.testClearCasesValid -- Time elapsed: 0.006 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Clear cases should be EASY ==> expected: <EASY> but was: <MEDIUM>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)
+	at com.lifeai.service.EventAnalysisTest$ClearCasesTests.lambda$1(EventAnalysisTest.java:136)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at com.lifeai.service.EventAnalysisTest$ClearCasesTests.testClearCasesValid(EventAnalysisTest.java:132)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[INFO] Running com.lifeai.service.EventAnalysisTest$ConfidenceScoreTests
+
+=== Difficulty Distribution ===
+EASY: 41 cases
+MEDIUM: 17 cases
+HARD: 42 cases
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.011 s <<< FAILURE! -- in com.lifeai.service.EventAnalysisTest$ConfidenceScoreTests
+[ERROR] com.lifeai.service.EventAnalysisTest$ConfidenceScoreTests.testConfidenceScoreReliability -- Time elapsed: 0.011 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: Should have >= 20 medium cases ==> expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:63)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:36)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:214)
+	at com.lifeai.service.EventAnalysisTest$ConfidenceScoreTests.testConfidenceScoreReliability(EventAnalysisTest.java:254)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
+[INFO] Running com.lifeai.service.EventAnalysisTest$EdgeCasesTests
+? Edge cases: 5 cases
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.lifeai.service.EventAnalysisTest$EdgeCasesTests
+[INFO] Running com.lifeai.service.EventAnalysisTest$MixedEventsTests
+? Mixed events: 5 cases
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.lifeai.service.EventAnalysisTest$MixedEventsTests
+[INFO] Running com.lifeai.service.EventAnalysisTest$PerEventTypeAccuracyTests
+
+=== Event Type Coverage ===
+OTHER: 11 test cases
+MEDICATION: 7 test cases
+SLEEP: 9 test cases
+MOOD: 7 test cases
+WEIGHT: 7 test cases
+DOCTOR_VISIT: 14 test cases
+SYMPTOM: 11 test cases
+ACTIVITY: 16 test cases
+MEDICAL: 2 test cases
+FOOD: 16 test cases
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in com.lifeai.service.EventAnalysisTest$PerEventTypeAccuracyTests
+[INFO] Running com.lifeai.service.EventAnalysisTest$RobustnessTests
+? Negation cases: 5 cases
+? Corrupted audio: 5 cases
+? Non-Polish inputs: 5 cases
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.lifeai.service.EventAnalysisTest$RobustnessTests
+[INFO] Running com.lifeai.service.EventAnalysisTest$TestDataValidation
+? All difficulty levels are valid
+? All event types are valid enum values
+
+=== Test Category Distribution ===
+INDIRECT_REFERENCES: 6 cases
+CLEAR_CASES: 41 cases
+EDGE_CASES: 5 cases
+CORRUPTED_AUDIO: 5 cases
+TEMPORAL_RELATIONSHIPS: 4 cases
+CAUSALITY: 4 cases
+CONDITIONAL_STATEMENTS: 3 cases
+MIXED_EVENTS: 5 cases
+NEGATION_CASES: 5 cases
+AMBIGUOUS_CASES: 5 cases
+TYPOS_AND_MISSPELLINGS: 3 cases
+UNCERTAIN_CASES: 4 cases
+CONSEQUENCES: 5 cases
+NON_POLISH_INPUTS: 5 cases
+? Test data loaded: 100 test cases
+? All test cases have valid structure
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in com.lifeai.service.EventAnalysisTest$TestDataValidation
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.287 s -- in com.lifeai.service.EventAnalysisTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   EventAnalysisTest$AmbiguousCasesTests.testAmbiguousCasesValid:157->lambda$1:160 Ambiguous cases should be MEDIUM difficulty ==> expected: <MEDIUM> but was: <HARD>
+[ERROR]   EventAnalysisTest$ClearCasesTests.testClearCasesValid:132->lambda$1:136 Clear cases should be EASY ==> expected: <EASY> but was: <MEDIUM>
+[ERROR]   EventAnalysisTest$ConfidenceScoreTests.testConfidenceScoreReliability:254 Should have >= 20 medium cases ==> expected: <true> but was: <false>
+[INFO] 
+[ERROR] Tests run: 15, Failures: 3, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.625 s
+[INFO] Finished at: 2025-12-18T09:44:53+01:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.1.2:test (default-test) on project lifeai-backend: There are test failures.
+[ERROR] 
+[ERROR] Please refer to c:\Users\Adam\IdeaProjects\AutoLife\lifeai-backend\target\surefire-reports for the individual test results.
+[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

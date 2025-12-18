@@ -1,0 +1,5 @@
+
+> lifeai-frontend@0.1.0 build
+> tsc -b && vite build
+
+src/components/IncompleteEventCard.tsx(2,10): error TS2305: Module '"../types"' has no exported member 'EventResponse'.

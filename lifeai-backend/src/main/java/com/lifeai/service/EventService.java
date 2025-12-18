@@ -3,6 +3,7 @@ package com.lifeai.service;
 import com.lifeai.dto.CreateEventRequest;
 import com.lifeai.dto.EventResponse;
 import com.lifeai.entity.Event;
+import com.lifeai.entity.EventStatus;
 import com.lifeai.entity.EventType;
 import com.lifeai.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,19 @@ public class EventService {
             .metadata(request.getMetadata())
             .build();
 
+        Event savedEvent = createEventInternal(event);
+        return toEventResponse(savedEvent);
+    }
+
+    public Event createEvent(Long userId, Event event) {
+        event.setUserId(userId);
+        return createEventInternal(event);
+    }
+
+    private Event createEventInternal(Event event) {
         Event savedEvent = eventRepository.save(event);
         
-        if (EventType.MEDICAL == savedEvent.getType()) {
+        if (EventType.MEDICAL == savedEvent.getType() || EventType.DOCTOR_VISIT == savedEvent.getType()) {
             calendarService.createCalendarEntryForMedicalEvent(
                 savedEvent.getUserId(),
                 savedEvent.getId(),
@@ -42,7 +53,7 @@ public class EventService {
             );
         }
         
-        return toEventResponse(savedEvent);
+        return savedEvent;
     }
 
     @Transactional(readOnly = true)
@@ -61,6 +72,11 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
+    public List<Event> getUserEvents(Long userId) {
+        return eventRepository.findByUserIdOrderByTimestampDesc(userId);
+    }
+
+    @Transactional(readOnly = true)
     public List<EventResponse> getEventsByUserIdAndType(Long userId, EventType type) {
         return eventRepository.findByUserIdAndTypeOrderByTimestampDesc(userId, type)
             .stream()
@@ -71,6 +87,14 @@ public class EventService {
     @Transactional(readOnly = true)
     public List<EventResponse> getEventsByUserIdAndDateRange(Long userId, LocalDateTime startTime, LocalDateTime endTime) {
         return eventRepository.findByUserIdAndTimestampBetween(userId, startTime, endTime)
+            .stream()
+            .map(this::toEventResponse)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventResponse> getEventsByUserIdAndStatus(Long userId, EventStatus status) {
+        return eventRepository.findByUserIdAndStatus(userId, status)
             .stream()
             .map(this::toEventResponse)
             .collect(Collectors.toList());
@@ -104,6 +128,8 @@ public class EventService {
             .description(event.getDescription())
             .timestamp(event.getTimestamp())
             .metadata(event.getMetadata())
+            .status(event.getStatus())
+            .clarificationQuestion(event.getClarificationQuestion())
             .createdAt(event.getCreatedAt())
             .updatedAt(event.getUpdatedAt())
             .build();

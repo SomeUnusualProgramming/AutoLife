@@ -60,6 +60,13 @@ stt:
   connect-timeout: 30000
   read-timeout: 300000
 
+ollama:
+  service:
+    url: ${OLLAMA_SERVICE_URL:http://localhost:11434}
+  model: ${OLLAMA_MODEL:mistral}
+  timeout:
+    seconds: ${OLLAMA_TIMEOUT_SECONDS:10}
+
 openai:
   api-key: ${OPENAI_API_KEY:}
   transcription:

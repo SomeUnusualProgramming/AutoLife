@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAudioRecorder, useSpeechToText, useUser } from '../hooks'
+import { ClarificationChat } from './ClarificationChat'
 
 interface AudioRecorderProps {
   onTranscriptionComplete?: (text: string) => void
@@ -10,8 +11,9 @@ interface AudioRecorderProps {
 export const AudioRecorder = ({ onTranscriptionComplete, onEventCreated, onRecommendationsReceived }: AudioRecorderProps) => {
   const { userId } = useUser()
   const { isRecording, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder()
-  const { status: transcriptionStatus, transcribedText, event, recommendations, error: transcriptionError, transcribe } = useSpeechToText()
+  const { status: transcriptionStatus, transcribedText, event, recommendations, sessionId, clarificationQuestion, error: transcriptionError, transcribe } = useSpeechToText()
   const [isProcessing, setIsProcessing] = useState(false)
+  const [showClarificationChat, setShowClarificationChat] = useState(false)
 
   useEffect(() => {
     if (audioBlob && !transcribedText && !isProcessing) {
@@ -28,6 +30,12 @@ export const AudioRecorder = ({ onTranscriptionComplete, onEventCreated, onRecom
       autoTranscribe()
     }
   }, [audioBlob, transcribedText, isProcessing, transcribe, userId])
+
+  useEffect(() => {
+    if (clarificationQuestion && sessionId) {
+      setShowClarificationChat(true)
+    }
+  }, [clarificationQuestion, sessionId])
 
   useEffect(() => {
     if (event && onEventCreated) {
@@ -181,7 +189,24 @@ export const AudioRecorder = ({ onTranscriptionComplete, onEventCreated, onRecom
         </div>
       )}
 
-      {transcribedText && (
+      {showClarificationChat && sessionId && clarificationQuestion ? (
+        <div className="mt-6">
+          <ClarificationChat
+            sessionId={sessionId}
+            onEventComplete={(completedEvent) => {
+              setShowClarificationChat(false)
+              if (onEventCreated) {
+                onEventCreated(completedEvent)
+              }
+              resetRecording()
+            }}
+            onCancel={() => {
+              setShowClarificationChat(false)
+              resetRecording()
+            }}
+          />
+        </div>
+      ) : transcribedText && (
         <div className="space-y-4">
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
             <p className="text-sm font-medium text-emerald-800 mb-2">✓ Transcription complete</p>
