@@ -1,6 +1,24 @@
 version: '3.8'
 
 services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: lifeai-ollama
+    ports:
+      - "11434:11434"
+    environment:
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-mistral}
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - lifeai-network
+
   postgres:
     image: postgres:16-alpine
     container_name: lifeai-postgres
@@ -56,10 +74,14 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       STT_SERVICE_URL: http://stt:5000
+      OLLAMA_SERVICE_URL: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-mistral}
     depends_on:
       postgres:
         condition: service_healthy
       stt:
+        condition: service_healthy
+      ollama:
         condition: service_healthy
     networks:
       - lifeai-network
@@ -81,6 +103,7 @@ services:
 volumes:
   postgres_data:
   whisper_cache:
+  ollama_data:
 
 networks:
   lifeai-network:

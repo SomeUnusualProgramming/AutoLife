@@ -1,5 +1,6 @@
 package com.lifeai.dto;
 
+import com.lifeai.entity.EventStatus;
 import com.lifeai.entity.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,9 @@ public class EventResponse {
     private LocalDateTime timestamp;
     @Builder.Default
     private Map<String, Object> metadata = new HashMap<>();
+    @Builder.Default
+    private EventStatus status = EventStatus.CONFIRMED;
+    private String clarificationQuestion;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { Event, Timeline, Recommendation, TranscriptionWithEventResponse } from '../types'
 import { eventApi, timelineApi, recommendationsApi, speechToTextApi } from '../services/api'
 export { useUser } from './useUser'
+export { useClarificationSession } from './useClarificationSession'
 
 export const useAsync = <T,>(
   asyncFunction: () => Promise<T>,
@@ -235,6 +236,8 @@ export const useSpeechToText = () => {
   const [transcribedText, setTranscribedText] = useState('')
   const [event, setEvent] = useState<any>(null)
   const [recommendations, setRecommendations] = useState<any[]>([])
+  const [sessionId, setSessionId] = useState<string | undefined>(undefined)
+  const [clarificationQuestion, setClarificationQuestion] = useState<string | undefined>(undefined)
   const [error, setError] = useState<Error | null>(null)
 
   const transcribe = useCallback(async (audioBlob: Blob, language?: string, userId?: number) => {
@@ -243,6 +246,8 @@ export const useSpeechToText = () => {
     setTranscribedText('')
     setEvent(null)
     setRecommendations([])
+    setSessionId(undefined)
+    setClarificationQuestion(undefined)
 
     try {
       if (!audioBlob || audioBlob.size === 0) {
@@ -260,6 +265,14 @@ export const useSpeechToText = () => {
       
       if (result.event) {
         setEvent(result.event)
+      }
+      
+      if ((result as any).sessionId) {
+        setSessionId((result as any).sessionId)
+      }
+      
+      if ((result as any).clarificationQuestion) {
+        setClarificationQuestion((result as any).clarificationQuestion)
       }
       
       if (result.recommendations && Array.isArray(result.recommendations)) {
@@ -281,6 +294,8 @@ export const useSpeechToText = () => {
     setTranscribedText('')
     setEvent(null)
     setRecommendations([])
+    setSessionId(undefined)
+    setClarificationQuestion(undefined)
     setError(null)
     setStatus('idle')
   }, [])
@@ -290,6 +305,8 @@ export const useSpeechToText = () => {
     transcribedText,
     event,
     recommendations,
+    sessionId,
+    clarificationQuestion,
     error,
     transcribe,
     resetTranscription,

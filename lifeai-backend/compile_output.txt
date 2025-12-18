@@ -1,0 +1,37 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.lifeai:lifeai-backend >----------------------
+[INFO] Building LifeAI Backend 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ lifeai-backend ---
+[INFO] Deleting c:\Users\Adam\IdeaProjects\AutoLife\lifeai-backend\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ lifeai-backend ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] Copying 8 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ lifeai-backend ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 92 source files with javac [debug release 21] to target\classes
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[WARNING] /c:/Users/Adam/IdeaProjects/AutoLife/lifeai-backend/src/main/java/com/lifeai/entity/ClarificationSession.java:[34,18] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /c:/Users/Adam/IdeaProjects/AutoLife/lifeai-backend/src/main/java/com/lifeai/entity/ClarificationSession.java:[51,27] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /c:/Users/Adam/IdeaProjects/AutoLife/lifeai-backend/src/main/java/com/lifeai/entity/PendingClarificationEvent.java:[48,33] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /c:/Users/Adam/IdeaProjects/AutoLife/lifeai-backend/src/main/java/com/lifeai/entity/PendingClarificationEvent.java:[51,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /c:/Users/Adam/IdeaProjects/AutoLife/lifeai-backend/src/main/java/com/lifeai/entity/User.java:[44,21] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[INFO] /c:/Users/Adam/IdeaProjects/AutoLife/lifeai-backend/src/main/java/com/lifeai/service/OllamaIntegrationService.java: c:\Users\Adam\IdeaProjects\AutoLife\lifeai-backend\src\main\java\com\lifeai\service\OllamaIntegrationService.java uses unchecked or unsafe operations.
+[INFO] /c:/Users/Adam/IdeaProjects/AutoLife/lifeai-backend/src/main/java/com/lifeai/service/OllamaIntegrationService.java: Recompile with -Xlint:unchecked for details.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.200 s
+[INFO] Finished at: 2025-12-17T18:52:47+01:00
+[INFO] ------------------------------------------------------------------------

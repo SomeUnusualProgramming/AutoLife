@@ -1,0 +1,702 @@
+[
+  {
+    "id": 1,
+    "input": "Zjadłem śniadanie z jajkami i chlebem o ósmej rano",
+    "expectedType": "FOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 2,
+    "input": "Obiadałem spaghetti z mięsem",
+    "expectedType": "FOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 3,
+    "input": "Kolacja o siedemnastej - ryba z ryżem",
+    "expectedType": "FOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 4,
+    "input": "Zjedłem kanapkę na drugie śniadanie",
+    "expectedType": "FOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 5,
+    "input": "Lunch - salata ze świeżymi warzywami",
+    "expectedType": "FOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 6,
+    "input": "Trainingowałem przez godzinę na siłowni",
+    "expectedType": "ACTIVITY",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 7,
+    "input": "Ćwiczyłem jogę przez trzydzieści minut",
+    "expectedType": "ACTIVITY",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 8,
+    "input": "Spacer po lesie na świeżym powietrzu",
+    "expectedType": "ACTIVITY",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 9,
+    "input": "Biiegiem przez czterdzieści pięć minut",
+    "expectedType": "ACTIVITY",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 10,
+    "input": "Rower górski przez dwie godziny",
+    "expectedType": "ACTIVITY",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 11,
+    "input": "Spaliśmy dziewięć godzin, wyspaliśmy się dobrze",
+    "expectedType": "SLEEP",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 12,
+    "input": "Śpię krócej niż zwykle - tylko pięć godzin",
+    "expectedType": "SLEEP",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 13,
+    "input": "Mała drzemka po południu - siedemdziesiąt minut",
+    "expectedType": "SLEEP",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 14,
+    "input": "Nie mogę zasnąć, insomnia",
+    "expectedType": "SLEEP",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 15,
+    "input": "Czuję się zmęczony, spaliśmy tylko cztery godziny",
+    "expectedType": "SLEEP",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 16,
+    "input": "Byłem u lekarza dzisiaj",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 17,
+    "input": "Wizyta u kardiologa na godzinę dziesiątą",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 18,
+    "input": "Kontrola u pediatry",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 19,
+    "input": "Badania laboratoryjne w szpitalu",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 20,
+    "input": "Zabiegi u dermatologa na twarzy",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 21,
+    "input": "Wzięłem aspirynę na ból głowy",
+    "expectedType": "MEDICATION",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 22,
+    "input": "Leki na ciśnienie - dwie tabletki rano",
+    "expectedType": "MEDICATION",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 23,
+    "input": "Antybiotyk dwa razy dziennie",
+    "expectedType": "MEDICATION",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 24,
+    "input": "Witamina C sto mililigramów",
+    "expectedType": "MEDICATION",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 25,
+    "input": "Inhalator do astmy przed wyjściem",
+    "expectedType": "MEDICATION",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 26,
+    "input": "Mam ból głowy",
+    "expectedType": "SYMPTOM",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 27,
+    "input": "Gorączka czterdzieści jeden stopni",
+    "expectedType": "SYMPTOM",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 28,
+    "input": "Kaszel i przeziębienie",
+    "expectedType": "SYMPTOM",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 29,
+    "input": "Nudności i wymioty",
+    "expectedType": "SYMPTOM",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 30,
+    "input": "Zwichnąłem kostkę",
+    "expectedType": "SYMPTOM",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 31,
+    "input": "Ważę osiemdziesiąt dwa kilogramy",
+    "expectedType": "WEIGHT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 32,
+    "input": "Waga: siedemdziesiąt osiem punto pięć kilo",
+    "expectedType": "WEIGHT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 33,
+    "input": "Straciłem trzy kilogramy w ostatnim miesiącu",
+    "expectedType": "WEIGHT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 34,
+    "input": "Przybyło mi pięć kilo",
+    "expectedType": "WEIGHT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 35,
+    "input": "BMI podskoczył na dwadzieścia osiem",
+    "expectedType": "WEIGHT",
+    "difficulty": "MEDIUM",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 36,
+    "input": "Czuję się smutny i przygnębiony",
+    "expectedType": "MOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 37,
+    "input": "Jestem szczęśliwy i radosny dzisiaj",
+    "expectedType": "MOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 38,
+    "input": "Zły nastrój, irytacja",
+    "expectedType": "MOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 39,
+    "input": "Lęk i niepokój",
+    "expectedType": "MOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 40,
+    "input": "Spokój i harmonia",
+    "expectedType": "MOOD",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  },
+  {
+    "id": 41,
+    "input": "Bezsenność i migrenowe bóle głowy",
+    "expectedType": "MEDICAL",
+    "difficulty": "MEDIUM",
+    "category": "AMBIGUOUS_CASES"
+  },
+  {
+    "id": 42,
+    "input": "Wizyta u kardiologa i pomiar ciśnienia",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "MEDIUM",
+    "category": "AMBIGUOUS_CASES"
+  },
+  {
+    "id": 43,
+    "input": "Żel na przepuchlizne kolano i ćwiczenia",
+    "expectedType": "ACTIVITY",
+    "difficulty": "MEDIUM",
+    "category": "AMBIGUOUS_CASES"
+  },
+  {
+    "id": 44,
+    "input": "Nie jadłem od rana, czuję się słabo",
+    "expectedType": "FOOD",
+    "difficulty": "MEDIUM",
+    "category": "AMBIGUOUS_CASES"
+  },
+  {
+    "id": 45,
+    "input": "Ćwiczenia oddechowe bo płuca boluję",
+    "expectedType": "ACTIVITY",
+    "difficulty": "MEDIUM",
+    "category": "AMBIGUOUS_CASES"
+  },
+  {
+    "id": 46,
+    "input": "Jadłem, ćwiczyłem i czuję się świetnie",
+    "expectedType": "FOOD",
+    "difficulty": "HARD",
+    "category": "MIXED_EVENTS"
+  },
+  {
+    "id": 47,
+    "input": "Zjadłem posiłek i poszedłem na spacer",
+    "expectedType": "FOOD",
+    "difficulty": "HARD",
+    "category": "MIXED_EVENTS"
+  },
+  {
+    "id": 48,
+    "input": "Training, prysznic i zdrowy obiad",
+    "expectedType": "ACTIVITY",
+    "difficulty": "HARD",
+    "category": "MIXED_EVENTS"
+  },
+  {
+    "id": 49,
+    "input": "Byłem u lekarza, doktor dał mi leki",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "HARD",
+    "category": "MIXED_EVENTS"
+  },
+  {
+    "id": 50,
+    "input": "Ślę, mam gorączkę i boli mnie gardło",
+    "expectedType": "SYMPTOM",
+    "difficulty": "HARD",
+    "category": "MIXED_EVENTS"
+  },
+  {
+    "id": 51,
+    "input": "I had breakfast with eggs",
+    "expectedType": "FOOD",
+    "difficulty": "MEDIUM",
+    "category": "NON_POLISH_INPUTS"
+  },
+  {
+    "id": 52,
+    "input": "I went to the doctor",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "MEDIUM",
+    "category": "NON_POLISH_INPUTS"
+  },
+  {
+    "id": 53,
+    "input": "Running for forty five minutes",
+    "expectedType": "ACTIVITY",
+    "difficulty": "MEDIUM",
+    "category": "NON_POLISH_INPUTS"
+  },
+  {
+    "id": 54,
+    "input": "I feel sad and depressed",
+    "expectedType": "MOOD",
+    "difficulty": "MEDIUM",
+    "category": "NON_POLISH_INPUTS"
+  },
+  {
+    "id": 55,
+    "input": "Weight is eighty kilograms",
+    "expectedType": "WEIGHT",
+    "difficulty": "MEDIUM",
+    "category": "NON_POLISH_INPUTS"
+  },
+  {
+    "id": 56,
+    "input": "jadłem zzzzzzz... śniadanie *noise* bardzo dobre",
+    "expectedType": "FOOD",
+    "difficulty": "HARD",
+    "category": "CORRUPTED_AUDIO"
+  },
+  {
+    "id": 57,
+    "input": "bbu... byłem u... *static* ...doktora",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "HARD",
+    "category": "CORRUPTED_AUDIO"
+  },
+  {
+    "id": 58,
+    "input": "ćwi... cwii... *noise* ...czę się",
+    "expectedType": "ACTIVITY",
+    "difficulty": "HARD",
+    "category": "CORRUPTED_AUDIO"
+  },
+  {
+    "id": 59,
+    "input": "zzz... mam zzz... ból",
+    "expectedType": "SYMPTOM",
+    "difficulty": "HARD",
+    "category": "CORRUPTED_AUDIO"
+  },
+  {
+    "id": 60,
+    "input": "ww... waga... *sound* osiem",
+    "expectedType": "WEIGHT",
+    "difficulty": "HARD",
+    "category": "CORRUPTED_AUDIO"
+  },
+  {
+    "id": 61,
+    "input": "",
+    "expectedType": "OTHER",
+    "difficulty": "EASY",
+    "category": "EDGE_CASES"
+  },
+  {
+    "id": 62,
+    "input": "   ",
+    "expectedType": "OTHER",
+    "difficulty": "EASY",
+    "category": "EDGE_CASES"
+  },
+  {
+    "id": 63,
+    "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "expectedType": "OTHER",
+    "difficulty": "MEDIUM",
+    "category": "EDGE_CASES"
+  },
+  {
+    "id": 64,
+    "input": "123456789 !@#$%^&*() {}[]",
+    "expectedType": "OTHER",
+    "difficulty": "MEDIUM",
+    "category": "EDGE_CASES"
+  },
+  {
+    "id": 65,
+    "input": "To nie jest powiązane z żadnym event typem",
+    "expectedType": "OTHER",
+    "difficulty": "EASY",
+    "category": "EDGE_CASES"
+  },
+  {
+    "id": 66,
+    "input": "Pewnie byłem wczoraj u lekarza, ale nie pamiętam",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "MEDIUM",
+    "category": "UNCERTAIN_CASES"
+  },
+  {
+    "id": 67,
+    "input": "Myślę że kupiłem coś do jedzenia",
+    "expectedType": "FOOD",
+    "difficulty": "MEDIUM",
+    "category": "UNCERTAIN_CASES"
+  },
+  {
+    "id": 68,
+    "input": "Może byłem chory wczoraj",
+    "expectedType": "SYMPTOM",
+    "difficulty": "HARD",
+    "category": "UNCERTAIN_CASES"
+  },
+  {
+    "id": 69,
+    "input": "Chyba ćwiczyłem trochę",
+    "expectedType": "ACTIVITY",
+    "difficulty": "MEDIUM",
+    "category": "UNCERTAIN_CASES"
+  },
+  {
+    "id": 70,
+    "input": "Nie jadłem",
+    "expectedType": "FOOD",
+    "difficulty": "HARD",
+    "category": "NEGATION_CASES"
+  },
+  {
+    "id": 71,
+    "input": "Nie ćwiczyłem dzisiaj",
+    "expectedType": "ACTIVITY",
+    "difficulty": "HARD",
+    "category": "NEGATION_CASES"
+  },
+  {
+    "id": 72,
+    "input": "Nie poszedłem do lekarza",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "HARD",
+    "category": "NEGATION_CASES"
+  },
+  {
+    "id": 73,
+    "input": "Nie mam gorączki",
+    "expectedType": "SYMPTOM",
+    "difficulty": "HARD",
+    "category": "NEGATION_CASES"
+  },
+  {
+    "id": 74,
+    "input": "Nie spaliśmy",
+    "expectedType": "SLEEP",
+    "difficulty": "HARD",
+    "category": "NEGATION_CASES"
+  },
+  {
+    "id": 75,
+    "input": "Zjadłem tak dużo że bolą mnie żołądek",
+    "expectedType": "FOOD",
+    "difficulty": "HARD",
+    "category": "CONSEQUENCES"
+  },
+  {
+    "id": 76,
+    "input": "Trenowałem tak ciężko że jestem cały bolący",
+    "expectedType": "ACTIVITY",
+    "difficulty": "HARD",
+    "category": "CONSEQUENCES"
+  },
+  {
+    "id": 77,
+    "input": "Spaliśmy za mało więc jestem zmęczony",
+    "expectedType": "SLEEP",
+    "difficulty": "HARD",
+    "category": "CONSEQUENCES"
+  },
+  {
+    "id": 78,
+    "input": "Nie jadłem dlatego mam niskie ciśnienie",
+    "expectedType": "FOOD",
+    "difficulty": "HARD",
+    "category": "CONSEQUENCES"
+  },
+  {
+    "id": 79,
+    "input": "Leki zrobiły mi nudności",
+    "expectedType": "MEDICATION",
+    "difficulty": "HARD",
+    "category": "CONSEQUENCES"
+  },
+  {
+    "id": 80,
+    "input": "Zwrócę na ten temat bo to było dzisiaj rano",
+    "expectedType": "OTHER",
+    "difficulty": "HARD",
+    "category": "INDIRECT_REFERENCES"
+  },
+  {
+    "id": 81,
+    "input": "To co robiłem to kiedyś powtarzam",
+    "expectedType": "OTHER",
+    "difficulty": "HARD",
+    "category": "INDIRECT_REFERENCES"
+  },
+  {
+    "id": 82,
+    "input": "Pierwszy raz to zostało",
+    "expectedType": "OTHER",
+    "difficulty": "HARD",
+    "category": "INDIRECT_REFERENCES"
+  },
+  {
+    "id": 83,
+    "input": "Tutaj się zapamiętaj",
+    "expectedType": "OTHER",
+    "difficulty": "HARD",
+    "category": "INDIRECT_REFERENCES"
+  },
+  {
+    "id": 84,
+    "input": "Zalogowałem się",
+    "expectedType": "OTHER",
+    "difficulty": "HARD",
+    "category": "INDIRECT_REFERENCES"
+  },
+  {
+    "id": 85,
+    "input": "Proszę zapamiętaj to",
+    "expectedType": "OTHER",
+    "difficulty": "HARD",
+    "category": "INDIRECT_REFERENCES"
+  },
+  {
+    "id": 86,
+    "input": "Chyba muszę iść do szpitala ze względu na bóle",
+    "expectedType": "MEDICAL",
+    "difficulty": "HARD",
+    "category": "CONDITIONAL_STATEMENTS"
+  },
+  {
+    "id": 87,
+    "input": "Gdyby się czuł gorzej to byś poszedł do lekarza",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "HARD",
+    "category": "CONDITIONAL_STATEMENTS"
+  },
+  {
+    "id": 88,
+    "input": "Jeśli będę miał taki nastrój to nie będę ćwiczyć",
+    "expectedType": "MOOD",
+    "difficulty": "HARD",
+    "category": "CONDITIONAL_STATEMENTS"
+  },
+  {
+    "id": 89,
+    "input": "Po zjedzeniu poczułem nudności",
+    "expectedType": "FOOD",
+    "difficulty": "HARD",
+    "category": "TEMPORAL_RELATIONSHIPS"
+  },
+  {
+    "id": 90,
+    "input": "Przed treningiem wypiłem kawę",
+    "expectedType": "ACTIVITY",
+    "difficulty": "HARD",
+    "category": "TEMPORAL_RELATIONSHIPS"
+  },
+  {
+    "id": 91,
+    "input": "Po wizycie u lekarza poczułem się lepiej",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "HARD",
+    "category": "TEMPORAL_RELATIONSHIPS"
+  },
+  {
+    "id": 92,
+    "input": "Podczas snu śniłem",
+    "expectedType": "SLEEP",
+    "difficulty": "HARD",
+    "category": "TEMPORAL_RELATIONSHIPS"
+  },
+  {
+    "id": 93,
+    "input": "Zmęczenie z powodu intensywnych ćwiczeń",
+    "expectedType": "ACTIVITY",
+    "difficulty": "HARD",
+    "category": "CAUSALITY"
+  },
+  {
+    "id": 94,
+    "input": "Ból z powodu upadku podczas szkolenia",
+    "expectedType": "SYMPTOM",
+    "difficulty": "HARD",
+    "category": "CAUSALITY"
+  },
+  {
+    "id": 95,
+    "input": "Opuchlizna spowodowana złą pozycją podczas snu",
+    "expectedType": "SLEEP",
+    "difficulty": "HARD",
+    "category": "CAUSALITY"
+  },
+  {
+    "id": 96,
+    "input": "Wysypka w wyniku alergii na leki",
+    "expectedType": "MEDICATION",
+    "difficulty": "HARD",
+    "category": "CAUSALITY"
+  },
+  {
+    "id": 97,
+    "input": "Poszerokiewpewnosci zbiór ciast i cukierków",
+    "expectedType": "FOOD",
+    "difficulty": "HARD",
+    "category": "TYPOS_AND_MISSPELLINGS"
+  },
+  {
+    "id": 98,
+    "input": "Chodzenie na spacere po polu",
+    "expectedType": "ACTIVITY",
+    "difficulty": "MEDIUM",
+    "category": "TYPOS_AND_MISSPELLINGS"
+  },
+  {
+    "id": 99,
+    "input": "Boleśćwiele",
+    "expectedType": "SYMPTOM",
+    "difficulty": "HARD",
+    "category": "TYPOS_AND_MISSPELLINGS"
+  },
+  {
+    "id": 100,
+    "input": "Byłem na przeglądzie medycznym w klinice",
+    "expectedType": "DOCTOR_VISIT",
+    "difficulty": "EASY",
+    "category": "CLEAR_CASES"
+  }
+]

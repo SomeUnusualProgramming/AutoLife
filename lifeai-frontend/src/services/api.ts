@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Event, Timeline, Recommendation, ApiResponse, TranscriptionWithEventResponse, TimelineEntry } from '../types'
+import { Event, Timeline, Recommendation, ApiResponse, TranscriptionWithEventResponse, TimelineEntry, AiAgentRequest, AiAgentResponse } from '../types'
 
 const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_URL) {
@@ -267,3 +267,51 @@ export const speechToTextApi = {
     }
   },
 }
+
+export const aiAgentApi = {
+  async processEventInput(request: AiAgentRequest): Promise<AiAgentResponse> {
+    try {
+      const response = await apiClient.post<AiAgentResponse>(
+        '/api/speech-to-text/process',
+        request
+      )
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.aiResponse || 'Failed to process event')
+      }
+      throw error
+    }
+  },
+
+  async respondToClarification(sessionId: string, userResponse: string): Promise<AiAgentResponse> {
+    try {
+      const response = await apiClient.post<AiAgentResponse>(
+        `/api/clarification/${sessionId}/respond`,
+        { sessionId, userResponse }
+      )
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.aiResponse || 'Failed to submit clarification')
+      }
+      throw error
+    }
+  },
+
+  async getSessionContext(sessionId: string): Promise<any> {
+    try {
+      const response = await apiClient.get<any>(
+        `/api/clarification/${sessionId}`
+      )
+      return response.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.error || 'Failed to fetch session context')
+      }
+      throw error
+    }
+  },
+}
+
+export const api = apiClient
